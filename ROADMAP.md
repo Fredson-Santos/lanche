@@ -43,11 +43,11 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 
 ### 1.1 Infraestrutura & Configuração
 
-- [ ] **Database Setup**
-  - Configurar SQLAlchemy com SQLite (dev) e PostgreSQL (prod)
-  - Implementar migrations (Alembic)
-  - Criar script de inicialização do banco
-  - Status: 📋 Não iniciado
+- [x] **Database Setup**
+  - ✅ Configurar SQLAlchemy com SQLite (dev) e PostgreSQL (prod)
+  - ✅ Implementar migrations (Alembic v1.13.1)
+  - ✅ Criar script de inicialização do banco (init_db)
+  - Status: ✅ Completo (19/04/2026)
 
 - [ ] **Environment & Config**
   - Implementar `core/config.py` com Pydantic Settings
@@ -64,17 +64,18 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 ### 1.2 Models & Schemas
 
 - [ ] **Implementar ORM Models**
-  - `Usuario` (email, senha_hash, nome, role, ativo)
-  - `Produto` (nome, descricao, preco, sku, ativo)
-  - `Estoque` (produto_id, quantidade)
-  - `Venda` (data_hora, total, status)
-  - `ItemVenda` (venda_id, produto_id, quantidade, preco)
-  - Status: 📋 Não iniciado
+  - [x] `Usuario` (email, senha_hash, ativo, data_criacao, data_atualizacao) - ✅ Completo
+  - [ ] `Produto` (nome, descricao, preco, sku, ativo)
+  - [ ] `Estoque` (produto_id, quantidade)
+  - [ ] `Venda` (data_hora, total, status)
+  - [ ] `ItemVenda` (venda_id, produto_id, quantidade, preco)
+  - Status: 🔄 Em progresso (20%)
 
 - [ ] **Implementar Pydantic Schemas**
-  - Schemas de request/response para cada model
-  - Validações de negócio (preço > 0, email único, etc)
-  - Status: 📋 Não iniciado
+  - [ ] Schemas de request/response para Usuario
+  - [ ] Schemas de request/response para Produto, Estoque, Venda, ItemVenda
+  - [ ] Validações de negócio (preço > 0, email único, etc)
+  - Status: 📋 Não iniciado (aguardando models completos)
 
 ### 1.3 Core Security & Utilities
 
@@ -102,15 +103,19 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 
 **Marcos:**
 - ✅ Dia 1: Estrutura criada (concluído)
+- ✅ Dia 2: Database Setup com Alembic (concluído - 19/04)
 - ⏳ Dia 2-3: Config + Docker validado
-- ⏳ Dia 4-5: Models e Schemas implementados
+- ⏳ Dia 3-4: Restante de Models (Produto, Estoque, Venda, ItemVenda)
+- ⏳ Dia 5: Schemas implementados
 - ⏳ Dia 6: Security core completo
 - ⏳ Dia 7: Database initialization
 
 **Entregas:**
 - ✅ Estrutura de diretórios
+- ✅ Database com Alembic + primeira migração
+- ✅ Model Usuario com migrations automáticas
 - ⏳ Backend rodando com Docker
-- ⏳ Database schema completo
+- ⏳ Restante do Database schema (Produto, Estoque, Venda, ItemVenda)
 - ⏳ API health check endpoint
 
 ---
@@ -635,7 +640,7 @@ Fase 5 (Quality) → contínuo
 
 | Sprint | Target | Real | % |
 |--------|--------|------|---|
-| Sprint 1 | 13 | ⏳ | ⏳ |
+| Sprint 1 | 13 | 3 (Database Setup) | 23% |
 | Sprint 2 | 13 | ⏳ | ⏳ |
 | Sprint 3 | 16 | ⏳ | ⏳ |
 | Sprint 4 | 16 | ⏳ | ⏳ |
@@ -686,31 +691,50 @@ Sprint 1 (Setup)
 
 ---
 
-**Última atualização:** Abril 19, 2026  
-**Próxima review:** Semana 1 (Dia 7)  
-**Status:** ✅ Roadmap aprovado e pronto para execução
+**Última atualização:** 19/04/2026 (Alembic + Database Setup completados)
+**Próxima review:** 20/04/2026
+**Status:** ✅ Fase 1 - Database Setup completo | 23% Sprint 1 pronto
 
 ---
 
 ## 🚀 Começar Agora
 
-**Próximas ações (Dia 1-2):**
+**Concluído (19/04/2026):**
+- ✅ Setup ambiente (estrutura criada)
+- ✅ Alembic configurado com SQLite/PostgreSQL
+- ✅ Primeira migração gerada (Usuario)
+- ✅ database.py com engine, SessionLocal, Base
 
-1. Setup ambiente Docker
+**Próximas ações (Dia 3-4):**
+
+1. Implementar restante dos Models
+   ```bash
+   # Criar modelos: Produto, Estoque, Venda, ItemVenda
+   # Em: backend/app/models/*.py
+   ```
+
+2. Gerar migrações automáticas
+   ```bash
+   cd backend
+   alembic revision --autogenerate -m "adicionar modelos de vendas"
+   alembic upgrade head
+   ```
+
+3. Implementar Pydantic Schemas
+   ```bash
+   # Criar schemas em: backend/app/schemas/*.py
+   ```
+
+4. Configurar environment & logging
+   ```bash
+   # Implementar core/config.py com Pydantic Settings
+   # Setup de logging estruturado
+   ```
+
+5. Setup Docker completo
    ```bash
    docker-compose up --build
    ```
-
-2. Validar estrutura criada
-   ```bash
-   cd backend && python -m venv venv
-   cd frontend && npm install
-   ```
-
-3. Iniciar com Fase 1
-   - Implementar `core/config.py`
-   - Implementar `core/security.py`
-   - Implementar models
 
 **Tracking:** Use o arquivo `ESTRUTURA_CRIADA.md` para marcar progresso.
 

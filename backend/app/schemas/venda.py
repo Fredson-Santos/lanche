@@ -4,7 +4,6 @@ from app.schemas.item_venda import ItemVendaCreate, ItemVendaComProdutoResponse
 
 
 class VendaCreate(BaseModel):
-    usuario_id: int
     itens: list[ItemVendaCreate] = Field(..., min_items=1)
 
 

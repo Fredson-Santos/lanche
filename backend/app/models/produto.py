@@ -10,6 +10,7 @@ class Produto(Base):
     nome = Column(String(255), unique=True, index=True, nullable=False)
     descricao = Column(Text, nullable=True)
     preco = Column(Float, nullable=False)
+    categoria = Column(String(100), nullable=False, default="outros")
     ativo = Column(Boolean, default=True, index=True)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(

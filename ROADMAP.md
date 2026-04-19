@@ -71,11 +71,14 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
   - [x] `ItemVenda` (venda_id, produto_id, quantidade, preco_unitario) - ✅ Completo (19/04)
   - Status: ✅ Completo (19/04/2026)
 
-- [ ] **Implementar Pydantic Schemas**
-  - [ ] Schemas de request/response para Usuario
-  - [ ] Schemas de request/response para Produto, Estoque, Venda, ItemVenda
-  - [ ] Validações de negócio (preço > 0, email único, etc)
-  - Status: 📋 Não iniciado (aguardando models completos)
+- [x] **Implementar Pydantic Schemas**
+  - [x] UsuarioCreate, UsuarioUpdate, UsuarioResponse, UsuarioLogin - ✅ Completo (19/04)
+  - [x] ProdutoCreate, ProdutoUpdate, ProdutoResponse, ProdutoListResponse - ✅ Completo (19/04)
+  - [x] EstoqueCreate, EstoqueUpdate, EstoqueResponse, EstoqueComProdutoResponse - ✅ Completo (19/04)
+  - [x] ItemVendaCreate, ItemVendaResponse, ItemVendaComProdutoResponse - ✅ Completo (19/04)
+  - [x] VendaCreate, VendaResponse, VendaListResponse - ✅ Completo (19/04)
+  - [x] Validações de negócio (preco > 0, email único, quantidade > 0, etc) - ✅ Completo (19/04)
+  - Status: ✅ Completo (19/04/2026)
 
 ### 1.3 Core Security & Utilities
 
@@ -105,8 +108,8 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 - ✅ Dia 1: Estrutura criada (concluído)
 - ✅ Dia 2: Database Setup com Alembic (concluído - 19/04)
 - ✅ Dia 2-3: Config + ORM Models (concluído - 19/04)
-- ⏳ Dia 3-4: Docker validado
-- ⏳ Dia 4-5: Schemas Pydantic implementados
+- ✅ Dia 3-4: Pydantic Schemas (concluído - 19/04)
+- ⏳ Dia 4-5: Docker validado
 - ⏳ Dia 5-6: Security core (JWT + bcrypt)
 - ⏳ Dia 6-7: Database initialization + seed data
 
@@ -114,11 +117,13 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 - ✅ Estrutura de diretórios
 - ✅ Database com Alembic + primeira migração
 - ✅ Modelos ORM (Usuario, Produto, Estoque, Venda, ItemVenda)
+- ✅ Schemas Pydantic (Create, Update, Response)
+- ✅ Validações de negócio (Email, preco > 0, quantidade >= 0, etc)
 - ✅ Relacionamentos e constraints de negócio
 - ✅ Timestamps de auditoria em todos os modelos
 - ⏳ Backend rodando com Docker
-- ⏳ Schemas Pydantic (request/response)
 - ⏳ API health check endpoint
+- ⏳ Security core (hash/verify password + JWT)
 
 ---
 

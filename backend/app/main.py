@@ -8,31 +8,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.core import settings, logger
+from app.db.database import Base, engine
+from app.models import Usuario, Produto, Estoque, Venda, ItemVenda
 
-# Import routes when implemented
-# from app.routes import auth, usuarios, produtos, estoque, vendas, relatorios
-
-# Import middleware
-# from app.middleware.auth import JWTMiddleware
-# from app.middleware.rbac import RBACMiddleware
-# from app.middleware.logging import LoggingMiddleware
-
-# Import database
-# from app.db.database import Base, engine, init_db
-
-# Initialize database tables
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     # Startup: Create tables
-#     Base.metadata.create_all(bind=engine)
-#     yield
-#     # Shutdown: (if needed)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
 
 app = FastAPI(
     title="LANCHE MVP API",
     description="Sistema de gestão para varejo alimentício",
     version="1.0.0",
-    # lifespan=lifespan
+    lifespan=lifespan
 )
 
 # CORS configuration

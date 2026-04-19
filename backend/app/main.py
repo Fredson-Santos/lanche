@@ -1,0 +1,74 @@
+"""
+LANCHE MVP - Main Application Entry Point
+FastAPI application with authentication, RBAC, and structured logging
+"""
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+
+# Import routes when implemented
+# from app.routes import auth, usuarios, produtos, estoque, vendas, relatorios
+
+# Import middleware
+# from app.middleware.auth import JWTMiddleware
+# from app.middleware.rbac import RBACMiddleware
+# from app.middleware.logging import LoggingMiddleware
+
+# Import database
+# from app.db.database import Base, engine, init_db
+
+# Initialize database tables
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     # Startup: Create tables
+#     Base.metadata.create_all(bind=engine)
+#     yield
+#     # Shutdown: (if needed)
+
+app = FastAPI(
+    title="LANCHE MVP API",
+    description="Sistema de gestão para varejo alimentício",
+    version="1.0.0",
+    # lifespan=lifespan
+)
+
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Add middleware
+# app.add_middleware(LoggingMiddleware)
+# app.add_middleware(JWTMiddleware)
+# app.add_middleware(RBACMiddleware)
+
+# Include routers when implemented
+# app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
+# app.include_router(usuarios.router, prefix="/api/usuarios", tags=["Usuarios"])
+# app.include_router(produtos.router, prefix="/api/produtos", tags=["Produtos"])
+# app.include_router(estoque.router, prefix="/api/estoque", tags=["Estoque"])
+# app.include_router(vendas.router, prefix="/api/vendas", tags=["Vendas"])
+# app.include_router(relatorios.router, prefix="/api/relatorios", tags=["Relatórios"])
+
+@app.get("/")
+async def root():
+    """Health check endpoint"""
+    return {
+        "message": "LANCHE MVP API",
+        "version": "1.0.0",
+        "status": "running"
+    }
+
+@app.get("/health")
+async def health():
+    """Health check for monitoring"""
+    return {"status": "ok"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

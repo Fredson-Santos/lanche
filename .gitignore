@@ -49,6 +49,39 @@ venv.bak/
 logs/
 *.log.*
 
+# Database
+*.db
+*.sqlite
+*.sqlite3
+lanche.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/yarn.lock
+
+# Backend
+backend/.env
+backend/.env.local
+backend/venv/
+backend/*.db
+
+# Docker
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
 # Testing
 .pytest_cache/
 .coverage

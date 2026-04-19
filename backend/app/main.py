@@ -8,12 +8,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.core import settings, logger
-from app.db.database import Base, engine
+from app.db.database import Base, engine, get_db
 from app.models import Usuario, Produto, Estoque, Venda, ItemVenda
+from app.db.init_db import init_db
+from app.routes import auth, usuarios, produtos, estoque, vendas, relatorios
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    # Inicializa o banco com dados padrão
+    db = next(get_db())
+    init_db(db)
     yield
 
 app = FastAPI(
@@ -32,18 +37,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add middleware
-# app.add_middleware(LoggingMiddleware)
-# app.add_middleware(JWTMiddleware)
-# app.add_middleware(RBACMiddleware)
-
-# Include routers when implemented
-# app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
-# app.include_router(usuarios.router, prefix="/api/usuarios", tags=["Usuarios"])
-# app.include_router(produtos.router, prefix="/api/produtos", tags=["Produtos"])
-# app.include_router(estoque.router, prefix="/api/estoque", tags=["Estoque"])
-# app.include_router(vendas.router, prefix="/api/vendas", tags=["Vendas"])
-# app.include_router(relatorios.router, prefix="/api/relatorios", tags=["Relatórios"])
+# Include routers
+app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
+app.include_router(usuarios.router, prefix="/api/usuarios", tags=["Usuarios"])
+app.include_router(produtos.router, prefix="/api/produtos", tags=["Produtos"])
+app.include_router(estoque.router, prefix="/api/estoque", tags=["Estoque"])
+app.include_router(vendas.router, prefix="/api/vendas", tags=["Vendas"])
+app.include_router(relatorios.router, prefix="/api/relatorios", tags=["Relatórios"])
 
 @app.get("/", tags=["root"])
 async def root():

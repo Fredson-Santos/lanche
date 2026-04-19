@@ -1,0 +1,110 @@
+@startuml LANCHE MVP - Diagrama de Sequência
+
+title Fluxo Completo - Login + Venda - MVP LANCHE
+
+actor "Operador" as Op
+participant "Frontend" as FE
+participant "API Backend" as API
+participant "Banco de Dados" as BD
+
+== Autenticação ==
+
+Op -> FE: 1. Insere email e senha
+activate FE
+FE -> API: POST /auth/login\n{email: "operador@lanche.com", senha: "***"}
+activate API
+API -> BD: SELECT * FROM usuarios\nWHERE email='operador@lanche.com'
+activate BD
+BD --> API: {id: 1, email: "operador@lanche.com", senha_hash: "bcrypt..."}
+deactivate BD
+API -> API: Validar senha (bcrypt)
+API -> API: Gerar JWT (exp. 24h)
+API -> BD: UPDATE usuarios\nSET ultimo_acesso=NOW()\nWHERE id=1
+activate BD
+BD --> API: ok
+deactivate BD
+API --> FE: {token: "eyJhbG...", usuario: {id: 1, nome: "João"}}
+deactivate API
+FE -> FE: Armazena token no localStorage
+FE --> Op: ✓ Autenticado\nBem-vindo João!
+deactivate FE
+
+== Venda ==
+
+Op -> FE: 2. Clica em "Nova Venda"
+activate FE
+FE -> API: POST /vendas\n(Authorization: Bearer eyJhbG...)
+activate API
+API -> API: Validar JWT
+API -> BD: INSERT vendas (status='aberta')
+activate BD
+BD --> API: venda_id = 1
+deactivate BD
+API --> FE: {venda_id: 1, total: 0}
+deactivate API
+FE --> Op: ✓ Venda iniciada
+deactivate FE
+
+Op -> FE: 3. Seleciona produto SKU-001
+activate FE
+FE -> API: GET /produtos/SKU-001\n(Authorization: Bearer eyJhbG...)
+activate API
+API -> BD: SELECT * FROM produtos WHERE sku='SKU-001'
+activate BD
+BD --> API: {id: 5, nome: "Coca 2L", preco: 12.50}
+deactivate BD
+API --> FE: {id: 5, nome: "Coca 2L", preco: 12.50}
+deactivate API
+FE --> Op: Produto selecionado
+deactivate FE
+
+Op -> FE: 4. Adiciona 2 unidades
+activate FE
+FE -> API: POST /vendas/1/itens\n{produto_id: 5, quantidade: 2}
+activate API
+API -> BD: SELECT quantidade FROM estoque\nWHERE produto_id=5
+activate BD
+BD --> API: quantidade = 10
+deactivate BD
+API -> API: Validar: 10 >= 2 ✓
+API -> BD: INSERT itens_venda\n(venda_id, produto_id, quantidade, preco)
+activate BD
+BD --> API: ok
+deactivate BD
+API -> BD: SELECT SUM(subtotal) FROM itens_venda\nWHERE venda_id=1
+activate BD
+BD --> API: total = 25.00
+deactivate BD
+API --> FE: {status: sucesso, total: 25.00}
+deactivate API
+FE --> Op: ✓ Item adicionado (Total: R$ 25.00)
+deactivate FE
+
+Op -> FE: 5. Clica em "Finalizar Venda"
+activate FE
+FE -> API: POST /vendas/1/finalizar
+activate API
+API -> BD: SELECT * FROM itens_venda\nWHERE venda_id=1
+activate BD
+BD --> API: [{produto_id: 5, quantidade: 2}]
+deactivate BD
+API -> BD: UPDATE estoque\nSET quantidade = quantidade - 2\nWHERE produto_id=5
+activate BD
+BD --> API: ok
+deactivate BD
+API -> BD: UPDATE vendas\nSET status='finalizada'\nWHERE id=1
+activate BD
+BD --> API: ok
+deactivate BD
+API --> FE: {status: finalizado, total: 25.00}
+deactivate API
+FE --> Op: ✓ Venda finalizada\nEstoque reduzido
+deactivate FE
+
+note over Op, BD
+  JWT validado em cada requisição
+  Estoque reduzido atomicamente
+  Operação rastreada com usuario_id
+end note
+
+@enduml

@@ -1,0 +1,72 @@
+@startuml LANCHE MVP - Diagrama de Estados
+
+title Estados do Usuário e Venda - MVP LANCHE
+
+[*] --> NaoAutenticado: aplicacao_iniciada()
+
+state NaoAutenticado {
+  [*] --> TeladeLogin
+  TeladeLogin --> ValidandoCredenciais: clicar_login()
+  ValidandoCredenciais --> [*]: credenciais_invalidas()
+}
+
+NaoAutenticado --> Autenticado: credenciais_validas()
+
+state Autenticado {
+  [*] --> Dashboard
+  Dashboard --> NaoAutenticado: efetuar_logout()
+  Dashboard --> VendaAberta: iniciar_venda()
+  
+  state VendaAberta {
+    [*] --> AguardandoItens
+    AguardandoItens --> AguardandoItens: adicionar_item()\nremover_item()
+  }
+  
+  VendaAberta --> VendaFinalizada: confirmar_venda()
+  
+  state VendaFinalizada {
+    [*] --> ReduzindoEstoque
+    ReduzindoEstoque --> RegistrandoVenda: estoque_reduzido()
+    RegistrandoVenda --> [*]
+  }
+  
+  VendaFinalizada --> Dashboard: venda_processada()
+  VendaAberta --> Dashboard: cancelar_venda()
+}
+
+Autenticado --> [*]: sessao_expirada()
+
+note right of NaoAutenticado
+  Usuário não autenticado
+  Tela de login com
+  validação de credenciais
+end note
+
+note right of TeladeLogin
+  Aguardando entrada de
+  email e senha
+end note
+
+note right of ValidandoCredenciais
+  Backend valida com bcrypt
+  Gera token JWT se válido
+end note
+
+note right of Autenticado
+  Usuário com token JWT válido
+  Pode acessar todas funcionalidades
+end note
+
+note right of VendaAberta
+  Carrinho aberto
+  Aguardando adição de itens
+end note
+
+note right of VendaFinalizada
+  Processamento da venda:
+  1. Reduz estoque
+  2. Registra no BD
+  3. Finaliza transação
+end note
+
+@enduml

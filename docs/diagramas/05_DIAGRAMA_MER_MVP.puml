@@ -1,0 +1,86 @@
+@startuml LANCHE MVP - Modelo Entidade-Relacionamento
+
+!define pk(name) <b>PK</b> name
+!define fk(name) <i>FK</i> name
+!define not_null <u>NN</u>
+
+entity "usuarios" as usuarios {
+  * pk(id): INT
+  --
+  * email: VARCHAR(100) <u>NN</u> [UNIQUE]
+  * senha_hash: VARCHAR(255) <u>NN</u>
+  * nome: VARCHAR(100) <u>NN</u>
+  * role: VARCHAR(20) <u>NN</u> [admin/gerente/caixa]
+  * ativo: BOOLEAN <u>NN</u> [DEFAULT: true]
+  * criado_em: TIMESTAMP [DEFAULT: NOW()]
+  * atualizado_em: TIMESTAMP
+  * ultimo_acesso: TIMESTAMP
+}
+
+entity "produtos" as produtos {
+  * pk(id): INT
+  --
+  * nome: VARCHAR(100) <u>NN</u> [UNIQUE]
+  * descricao: TEXT
+  * preco: DECIMAL(10,2) <u>NN</u> [> 0]
+  * sku: VARCHAR(50) [UNIQUE]
+  * ativo: BOOLEAN [DEFAULT: true]
+  * criado_em: TIMESTAMP [DEFAULT: NOW()]
+  * atualizado_em: TIMESTAMP
+}
+
+entity "estoque" as estoque {
+  * pk(id): INT
+  --
+  * fk(produto_id): INT <u>NN</u> [UNIQUE]
+  * quantidade: INT <u>NN</u> [DEFAULT: 0]
+  * atualizado_em: TIMESTAMP [DEFAULT: NOW()]
+}
+
+entity "vendas" as vendas {
+  * pk(id): INT
+  --
+  * fk(usuario_id): INT <u>NN</u>
+  * data_hora: TIMESTAMP <u>NN</u> [DEFAULT: NOW()]
+  * subtotal: DECIMAL(10,2) <u>NN</u>
+  * total: DECIMAL(10,2) <u>NN</u>
+  * status: VARCHAR(20) <u>NN</u> [aberta/finalizada/cancelada]
+}
+
+entity "itens_venda" as itens_venda {
+  * pk(id): INT
+  --
+  * fk(venda_id): INT <u>NN</u>
+  * fk(produto_id): INT <u>NN</u>
+  * quantidade: INT <u>NN</u>
+  * preco_unitario: DECIMAL(10,2) <u>NN</u>
+  * subtotal: DECIMAL(10,2) <u>NN</u>
+}
+
+' Relacionamentos
+usuarios ||--o{ vendas
+produtos ||--|| estoque
+produtos ||--o{ itens_venda
+vendas ||--o{ itens_venda
+
+note bottom of produtos
+  Catálogo único de produtos
+  Nome e preço obrigatórios
+end note
+
+note bottom of estoque
+  Uma linha por produto
+  Quantidade sincronizada
+end note
+
+note bottom of vendas
+  Histórico imutável
+  Status: aberta/finalizada/cancelada
+end note
+
+note bottom of itens_venda
+  Detalhe da venda
+  Preço capturado no momento
+end note
+
+@enduml

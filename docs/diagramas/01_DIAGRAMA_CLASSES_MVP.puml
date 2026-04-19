@@ -1,0 +1,104 @@
+@startuml LANCHE MVP - Diagrama de Classes
+
+class Usuario {
+  -id: int (PK)
+  -email: string (100)
+  -senha_hash: string
+  -nome: string (100)
+  -role: string (admin|gerente|caixa)
+  -ativo: boolean
+  -criado_em: timestamp
+  -atualizado_em: timestamp
+  -ultimo_acesso: timestamp
+  --
+  +efetuarLogin(email, senha): JWT
+  +validarSenha(senha): boolean
+  +atualizar(dados)
+  +efetuarLogout()
+  +temPermissao(acao): boolean
+}
+
+class Produto {
+  -id: int (PK)
+  -nome: string (100)
+  -descricao: text
+  -preco: decimal
+  -sku: string (50)
+  -ativo: boolean
+  -criado_em: timestamp
+  -atualizado_em: timestamp
+  --
+  +obterDetalhes(): Produto
+  +validarPreco(): boolean
+}
+
+class Estoque {
+  -id: int (PK)
+  -produto_id: int (FK)
+  -quantidade: int
+  -atualizado_em: timestamp
+  --
+  +adicionarQuantidade(qtd)
+  +reduzirQuantidade(qtd)
+  +verificarDisponibilidade(qtd): boolean
+}
+
+class Venda {
+  -id: int (PK)
+  -data_hora: timestamp
+  -subtotal: decimal
+  -total: decimal
+  -status: string
+  --
+  +adicionarItem(ItemVenda)
+  +removerItem(ItemVenda)
+  +calcularTotal(): decimal
+  +finalizar()
+  +cancelar()
+}
+
+class ItemVenda {
+  -id: int (PK)
+  -venda_id: int (FK)
+  -produto_id: int (FK)
+  -quantidade: int
+  -preco_unitario: decimal
+  -subtotal: decimal
+  --
+  +calcularSubtotal(): decimal
+}
+
+Usuario "1" -- "*" Venda : realiza
+Produto "1" -- "*" Estoque : tem
+Produto "1" -- "*" ItemVenda : vendido em
+Venda "1" -- "*" ItemVenda : contém
+
+note right of Usuario
+  Usuários do sistema
+  Autenticação com JWT
+  Email único
+  Roles: admin | gerente | caixa
+  Controle de acesso por papel
+end note
+
+note right of Produto
+  Catálogo de produtos
+  com preço base
+end note
+
+note right of Estoque
+  Quantidade por produto
+  Sincronização ao vender
+end note
+
+note right of Venda
+  Transação de venda
+  Imutável após finalizar
+end note
+
+note right of ItemVenda
+  Detalhe do item
+  na venda
+end note
+
+@enduml

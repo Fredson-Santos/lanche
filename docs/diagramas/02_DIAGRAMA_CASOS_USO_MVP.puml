@@ -1,0 +1,110 @@
+@startuml LANCHE MVP - Casos de Uso
+
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam actorBackgroundColor #FCE4D6
+
+actor "Caixa" as Caixa
+actor "Gerente" as Gerente
+actor "Admin" as Admin
+
+package "Autenticação" {
+  usecase UC_LOGIN as "Efetuar Login"
+  usecase UC_LOGOUT as "Efetuar Logout"
+  usecase UC_VALIDAR as "Validar Credenciais"
+}
+
+package "Gestão de Produtos" {
+  usecase UC_CADASTRAR as "Cadastrar Produto"
+  usecase UC_LISTAR as "Listar Produtos"
+  usecase UC_EDITAR as "Editar Produto"
+  usecase UC_DELETAR as "Deletar Produto"
+}
+
+package "Controle de Estoque" {
+  usecase UC_CONSULTAR as "Consultar Estoque"
+  usecase UC_ATUALIZAR as "Atualizar Quantidade"
+}
+
+package "Venda" {
+  usecase UC_NOVA_VENDA as "Iniciar Nova Venda"
+  usecase UC_ADICIONAR as "Adicionar Produto\nà Venda"
+  usecase UC_REMOVER as "Remover Produto\nda Venda"
+  usecase UC_FINALIZAR as "Finalizar Venda"
+}
+
+package "Relatórios" {
+  usecase UC_HISTORICO as "Ver Histórico\nde Vendas"
+  usecase UC_FILTRAR as "Filtrar por Período"
+  usecase UC_TOTAL as "Calcular Total"
+}
+
+package "Administração" {
+  usecase UC_GERENCIAR_USERS as "Gerenciar Usuários"
+  usecase UC_ATRIB_ROLES as "Atribuir Roles"
+}
+
+' Login é comum a todos
+Caixa --> UC_LOGIN
+Gerente --> UC_LOGIN
+Admin --> UC_LOGIN
+
+UC_LOGIN -.-> UC_VALIDAR : <<include>>
+
+' Caixa - Vendedor (acesso limitado)
+UC_LOGIN -.-> UC_LISTAR : <<extend>>
+UC_LOGIN -.-> UC_CONSULTAR : <<extend>>
+UC_LOGIN -.-> UC_NOVA_VENDA : <<extend>>
+UC_LOGIN -.-> UC_ADICIONAR : <<extend>>
+UC_LOGIN -.-> UC_REMOVER : <<extend>>
+UC_LOGIN -.-> UC_FINALIZAR : <<extend>>
+UC_LOGIN -.-> UC_HISTORICO : <<extend>>
+UC_LOGIN -.-> UC_LOGOUT : <<extend>>
+
+' Gerente - Acesso expandido
+Gerente --> UC_CADASTRAR
+Gerente --> UC_EDITAR
+Gerente --> UC_ATUALIZAR
+Gerente --> UC_FILTRAR
+Gerente --> UC_TOTAL
+
+' Admin - Acesso total
+Admin --> UC_DELETAR
+Admin --> UC_GERENCIAR_USERS
+Admin --> UC_ATRIB_ROLES
+
+UC_ADICIONAR -.-> UC_CONSULTAR : <<include>>
+UC_FINALIZAR -.-> UC_ATUALIZAR : <<include>>
+UC_FILTRAR -.-> UC_HISTORICO : <<include>>
+UC_TOTAL -.-> UC_HISTORICO : <<include>>
+
+note right of Caixa
+  Operador de caixa
+  - Faz vendas
+  - Consulta produtos/estoque
+  - Vê histórico
+end note
+
+note right of Gerente
+  Gerente de loja
+  - Tudo que Caixa faz
+  - + Cadastra/edita produtos
+  - + Atualiza estoque
+  - + Filtra relatórios
+end note
+
+note right of Admin
+  Administrador do sistema
+  - Tudo que todos fazem
+  - + Gerencia usuários
+  - + Atribui roles
+  - + Deleta produtos
+end note
+
+note right of UC_LOGIN
+  Requerido antes de
+  acessar qualquer
+  funcionalidade
+end note
+
+@enduml

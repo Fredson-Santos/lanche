@@ -7,6 +7,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
+from app.core import settings, logger
+
 # Import routes when implemented
 # from app.routes import auth, usuarios, produtos, estoque, vendas, relatorios
 
@@ -55,19 +57,50 @@ app.add_middleware(
 # app.include_router(vendas.router, prefix="/api/vendas", tags=["Vendas"])
 # app.include_router(relatorios.router, prefix="/api/relatorios", tags=["Relatórios"])
 
-@app.get("/")
+@app.get("/", tags=["root"])
 async def root():
-    """Health check endpoint"""
+    """Endpoint raiz da API"""
+    logger.info(
+        "Root endpoint accessed",
+        extra={"event": "root_access"},
+    )
     return {
         "message": "LANCHE MVP API",
         "version": "1.0.0",
-        "status": "running"
+        "docs": "/docs",
+        "health": "/health",
     }
 
-@app.get("/health")
-async def health():
-    """Health check for monitoring"""
-    return {"status": "ok"}
+@app.get("/health", tags=["health"])
+async def health_check():
+    """Endpoint de health check da API"""
+    logger.info(
+        "Health check endpoint accessed",
+        extra={
+            "event": "health_check",
+            "environment": settings.ENVIRONMENT,
+            "database": settings.DATABASE_URL.split("://")[0] if settings.DATABASE_URL else "unknown",
+        },
+    )
+    return {
+        "status": "healthy",
+        "message": "LANCHE MVP API is running",
+        "environment": settings.ENVIRONMENT,
+        "debug": settings.DEBUG,
+        "log_level": settings.LOG_LEVEL,
+    }
+
+# Log initial startup information
+logger.info(
+    "LANCHE MVP API Startup",
+    extra={
+        "event": "app_startup",
+        "environment": settings.ENVIRONMENT,
+        "log_format": settings.LOG_FORMAT,
+        "log_level": settings.LOG_LEVEL,
+        "debug": settings.DEBUG,
+    },
+)
 
 if __name__ == "__main__":
     import uvicorn

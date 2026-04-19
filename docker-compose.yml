@@ -1,20 +1,6 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:16
-    container_name: lanche-db
-    environment:
-      POSTGRES_DB: lanche_db
-      POSTGRES_USER: lanche
-      POSTGRES_PASSWORD: lanche123
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - lanche-network
-
   backend:
     build:
       context: ./backend
@@ -24,12 +10,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://lanche:lanche123@db:5432/lanche_db
       SECRET_KEY: dev-secret-key-change-in-prod
     volumes:
       - ./backend:/app
-    depends_on:
-      - db
     networks:
       - lanche-network
 
@@ -47,9 +30,6 @@ services:
       VITE_API_URL: http://localhost:8000
     networks:
       - lanche-network
-
-volumes:
-  postgres_data:
 
 networks:
   lanche-network:

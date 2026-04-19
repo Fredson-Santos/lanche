@@ -63,13 +63,13 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 
 ### 1.2 Models & Schemas
 
-- [ ] **Implementar ORM Models**
-  - [x] `Usuario` (email, senha_hash, ativo, data_criacao, data_atualizacao) - ✅ Completo
-  - [ ] `Produto` (nome, descricao, preco, sku, ativo)
-  - [ ] `Estoque` (produto_id, quantidade)
-  - [ ] `Venda` (data_hora, total, status)
-  - [ ] `ItemVenda` (venda_id, produto_id, quantidade, preco)
-  - Status: 🔄 Em progresso (20%)
+- [x] **Implementar ORM Models**
+  - [x] `Usuario` (email, senha_hash, ativo, data_criacao, data_atualizacao) - ✅ Completo (19/04)
+  - [x] `Produto` (nome, descricao, preco, ativo, data_criacao, data_atualizacao) - ✅ Completo (19/04)
+  - [x] `Estoque` (produto_id, quantidade, data_atualizacao) - ✅ Completo (19/04)
+  - [x] `Venda` (usuario_id, total, data_venda, itens) - ✅ Completo (19/04)
+  - [x] `ItemVenda` (venda_id, produto_id, quantidade, preco_unitario) - ✅ Completo (19/04)
+  - Status: ✅ Completo (19/04/2026)
 
 - [ ] **Implementar Pydantic Schemas**
   - [ ] Schemas de request/response para Usuario
@@ -104,18 +104,20 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 **Marcos:**
 - ✅ Dia 1: Estrutura criada (concluído)
 - ✅ Dia 2: Database Setup com Alembic (concluído - 19/04)
-- ⏳ Dia 2-3: Config + Docker validado
-- ⏳ Dia 3-4: Restante de Models (Produto, Estoque, Venda, ItemVenda)
-- ⏳ Dia 5: Schemas implementados
-- ⏳ Dia 6: Security core completo
-- ⏳ Dia 7: Database initialization
+- ✅ Dia 2-3: Config + ORM Models (concluído - 19/04)
+- ⏳ Dia 3-4: Docker validado
+- ⏳ Dia 4-5: Schemas Pydantic implementados
+- ⏳ Dia 5-6: Security core (JWT + bcrypt)
+- ⏳ Dia 6-7: Database initialization + seed data
 
 **Entregas:**
 - ✅ Estrutura de diretórios
 - ✅ Database com Alembic + primeira migração
-- ✅ Model Usuario com migrations automáticas
+- ✅ Modelos ORM (Usuario, Produto, Estoque, Venda, ItemVenda)
+- ✅ Relacionamentos e constraints de negócio
+- ✅ Timestamps de auditoria em todos os modelos
 - ⏳ Backend rodando com Docker
-- ⏳ Restante do Database schema (Produto, Estoque, Venda, ItemVenda)
+- ⏳ Schemas Pydantic (request/response)
 - ⏳ API health check endpoint
 
 ---

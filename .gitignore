@@ -24,6 +24,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Virtual environments
+.venv/
 venv/
 env/
 ENV/
@@ -97,6 +98,26 @@ htmlcov/
 .pylintrc
 .mypy_cache/
 .dmypy.json
+
+# Alembic
+alembic/versions/__pycache__/
+
+# Project-specific
+*.pem
+*.key
+*.crt
+secrets/
+.credentials/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Misc
+*.zip
+*.tar.gz
+.cache/
 dmypy.json
 
 # Node modules (if applicable)

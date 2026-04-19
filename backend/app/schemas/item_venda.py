@@ -5,6 +5,7 @@ from app.schemas.produto import ProdutoListResponse
 class ItemVendaCreate(BaseModel):
     produto_id: int
     quantidade: int = Field(..., gt=0)
+    preco_unitario: float = Field(..., gt=0)
 
 
 class ItemVendaResponse(BaseModel):

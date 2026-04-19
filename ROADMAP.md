@@ -49,11 +49,11 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
   - ✅ Criar script de inicialização do banco (init_db)
   - Status: ✅ Completo (19/04/2026)
 
-- [ ] **Environment & Config**
-  - Implementar `core/config.py` com Pydantic Settings
-  - Validar variáveis de ambiente
-  - Setup de logging estruturado (JSON)
-  - Status: 📋 Não iniciado
+- [x] **Environment & Config**
+  - ✅ Implementar `core/config.py` com Pydantic Settings
+  - ✅ Validar variáveis de ambiente (via python-dotenv)
+  - ✅ Setup de logging estruturado (JSON)
+  - Status: ✅ Completo (19/04/2026)
 
 - [ ] **Docker & DevOps**
   - Validar `docker-compose.yml`

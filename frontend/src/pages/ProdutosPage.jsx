@@ -10,6 +10,16 @@ import { toast } from '../hooks/useToast'
 import { productService } from '../services/productService'
 
 const fmtBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+const fmtDateTime = (iso) => {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const hh = String(d.getHours()).padStart(2, '0')
+  const min = String(d.getMinutes()).padStart(2, '0')
+  const ss = String(d.getSeconds()).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  return `${hh}:${min}:${ss} ${dd}/${mm}`
+}
 const EMPTY_FORM = { nome: '', descricao: '', preco: '' }
 
 export function ProdutosPage() {
@@ -98,7 +108,7 @@ export function ProdutosPage() {
     )},
     { key: 'preco',    label: 'Preço',    render: v => <span style={{ fontWeight: 600, color: 'var(--color-success)' }}>{fmtBRL(v)}</span> },
     { key: 'ativo',    label: 'Status',   render: v => <ActiveBadge value={v} />, width: 100 },
-    { key: 'data_criacao', label: 'Criado em', render: v => v, width: 120 },
+    { key: 'data_criacao', label: 'Criado', render: v => fmtDateTime(v), width: 120 },
   ]
 
   return (

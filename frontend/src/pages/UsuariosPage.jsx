@@ -8,6 +8,16 @@ import { Badge, ActiveBadge, RoleBadge } from '../components/ui/Badge'
 import { toast } from '../hooks/useToast'
 import { userService } from '../services/userService'
 
+const fmtDateTime = (iso) => {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const hh = String(d.getHours()).padStart(2, '0')
+  const min = String(d.getMinutes()).padStart(2, '0')
+  const ss = String(d.getSeconds()).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  return `${hh}:${min}:${ss} ${dd}/${mm}`
+}
 const EMPTY_FORM = { username: '', email: '', role: 'caixa', senha: '' }
 
 export function UsuariosPage() {
@@ -89,7 +99,7 @@ export function UsuariosPage() {
     )},
     { key: 'role',    label: 'Role',   render: v => <RoleBadge role={v} />,  width: 110 },
     { key: 'ativo',   label: 'Status', render: v => <ActiveBadge value={v}/>, width: 100 },
-    { key: 'data_criacao', label: 'Criado', render: v => v, width: 120 },
+    { key: 'data_criacao', label: 'Criado', render: v => fmtDateTime(v), width: 120 },
   ]
 
   return (

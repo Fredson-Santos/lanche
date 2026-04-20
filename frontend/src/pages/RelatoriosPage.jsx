@@ -4,6 +4,7 @@ import { StatCard } from '../components/ui/StatCard'
 import { Button } from '../components/ui/Button'
 import { Spinner } from '../components/ui/Spinner'
 import { reportService } from '../services/reportService'
+import { salesService } from '../services/salesService'
 
 const fmtBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 const fmtDateLabel = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' })
@@ -24,13 +25,23 @@ export function RelatoriosPage() {
   const load = useCallback(async () => {
     setLoading(true)
     const [vendasResp, faturResp, dayResp] = await Promise.all([
-      reportService.getVendas({ inicio, fim }),
+      salesService.getAll({ inicio, fim }),
       reportService.getFaturamento({ inicio, fim }),
       reportService.getVendasPorDia({ inicio, fim }),
     ])
-    setVendas(vendasResp.data)
-    setTotal(faturResp.data.total)
-    setByDay(dayResp.data)
+    
+    // Filter sales by date on the client side since the backend /api/vendas/ returns all
+    const allSales = vendasResp.data || []
+    const startObj = new Date(inicio + 'T00:00:00')
+    const endObj   = new Date(fim + 'T23:59:59.999')
+    const filteredSales = allSales.filter(v => {
+      const d = new Date(v.data_venda)
+      return d >= startObj && d <= endObj
+    })
+
+    setVendas(filteredSales)
+    setTotal(faturResp.data.total_faturamento || 0)
+    setByDay(dayResp.data.vendas_por_dia || [])
     setLoading(false)
   }, [inicio, fim])
 

@@ -91,7 +91,7 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 - [ ] **E2E Automated Tests:** Adicionar testes ponta-a-ponta caso exigido.
 
 ### 5.2 Segurança e Logging
-- [ ] **Logging & Auditoria (TASK-004)**: Registrar em JSON estruturado as requests falhas.
+- [x] **Logging & Auditoria (TASK-004)**: Sistema completo de logging em JSON estruturado com auditoria persistida.
 
 ### 5.3 Deploy
 - [ ] **Docker & DevOps**: Revisar o `docker-compose.yml` e o banco em nuvem (Ex: VPS) para migrar o SQLite nativo de Dev para SQLite3 Production/Postgresql em deploy.

@@ -6,6 +6,7 @@ import { Spinner } from '../components/ui/Spinner'
 import { toast } from '../hooks/useToast'
 import { productService } from '../services/productService'
 import { salesService } from '../services/salesService'
+import { stockService } from '../services/stockService'
 
 const fmtBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 const fmtDate = (iso) => new Date(iso).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })
@@ -22,6 +23,7 @@ export function VendasPage() {
 
   const [tab, setTab]             = useState('nova') // nova | historico
   const [products, setProducts]   = useState([])
+  const [stockInfo, setStockInfo] = useState({})
   const [cart, setCart]           = useState([])
   const [search, setSearch]       = useState('')
   const [loading, setLoading]     = useState(true)
@@ -30,9 +32,24 @@ export function VendasPage() {
   const [histLoading, setHistLoading] = useState(false)
 
   const loadProducts = useCallback(async () => {
-    const resp = await productService.getAll()
-    setProducts(resp.data.filter(p => p.ativo))
-    setLoading(false)
+    try {
+      const [prodResp, stockResp] = await Promise.all([
+        productService.getAll(),
+        stockService.getAll()
+      ])
+      
+      const sMap = {}
+      stockResp.data.forEach(s => {
+        sMap[s.produto_id] = s.quantidade
+      })
+      
+      setStockInfo(sMap)
+      setProducts(prodResp.data.filter(p => p.ativo))
+    } catch {
+      toast.error('Erro', 'Falha ao carregar produtos.')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { loadProducts() }, [loadProducts])
@@ -131,18 +148,27 @@ export function VendasPage() {
               <div className="loading-overlay"><Spinner size="lg" /></div>
             ) : (
               <div className="products-grid">
-                {filteredProducts.map(p => (
-                  <div
-                    id={`produto-card-${p.id}`}
-                    key={p.id}
-                    className="product-card-sale"
-                    onClick={() => addToCart(p)}
-                  >
-                    <div className="product-emoji">{getEmoji(p.nome)}</div>
-                    <div className="product-name">{p.nome}</div>
-                    <div className="product-price">{fmtBRL(p.preco)}</div>
-                  </div>
-                ))}
+                {filteredProducts.map(p => {
+                  const qtd = stockInfo[p.id] || 0
+                  const isOutOfStock = qtd === 0
+                  
+                  return (
+                    <div
+                      id={`produto-card-${p.id}`}
+                      key={p.id}
+                      className={`product-card-sale ${isOutOfStock ? 'out-of-stock' : ''}`}
+                      onClick={() => addToCart(p)}
+                      style={isOutOfStock ? { border: '1px solid var(--color-danger)' } : {}}
+                    >
+                      <div className="product-emoji">{getEmoji(p.nome)}</div>
+                      <div className="product-name">{p.nome}</div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: isOutOfStock ? 'var(--color-danger)' : 'var(--color-text-muted)', marginBottom: '8px' }}>
+                        Estoque: {qtd}
+                      </div>
+                      <div className="product-price">{fmtBRL(p.preco)}</div>
+                    </div>
+                  )
+                })}
               </div>
             )}
           </div>

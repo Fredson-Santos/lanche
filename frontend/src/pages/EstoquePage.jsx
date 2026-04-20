@@ -29,7 +29,11 @@ export function EstoquePage() {
   const load = useCallback(async () => {
     setLoading(true)
     const resp = await stockService.getAll()
-    setStock(resp.data)
+    const mapped = resp.data.map(s => ({
+      ...s,
+      nome: s.produto?.nome || 'Sem nome'
+    }))
+    setStock(mapped)
     setLoading(false)
   }, [])
 
@@ -58,8 +62,8 @@ export function EstoquePage() {
   const columns = [
     { key: 'nome',       label: 'Produto',     render: v => <span style={{ fontWeight: 500 }}>{v}</span> },
     { key: 'quantidade', label: 'Qtd.',         render: v => <span style={{ fontWeight: 700 }}>{v}</span>, width: 80 },
-    { key: 'quantidade', label: 'Status',       render: (v) => {
-      const lvl = LEVELS(v)
+    { key: 'status',     label: 'Status',       render: (v, r) => {
+      const lvl = LEVELS(r.quantidade)
       return (
         <div className="stock-bar-wrap">
           <div className="stock-bar">

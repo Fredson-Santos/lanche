@@ -32,14 +32,19 @@ export function DashboardPage() {
       const today    = todayResp.data
       const allSales = salesResp.data
 
+      const mappedEstoque = estoque.map(s => ({
+        ...s,
+        nome: s.produto?.nome || 'Sem nome'
+      }))
+
       setStats({
         totalProdutos: produtos.filter(p => p.ativo).length,
         vendasHoje:    today.count,
         faturamentoHoje: today.total,
-        estoqueAlerta: estoque.filter(e => e.quantidade < 10).length,
+        estoqueAlerta: mappedEstoque.filter(e => e.quantidade < 10).length,
       })
-      setRecent(allSales.slice(0, 5))
-      setLowStock(estoque.filter(e => e.quantidade < 10).slice(0, 5))
+      setRecent(allSales.slice(0, 5).sort((a, b) => b.id - a.id))
+      setLowStock(mappedEstoque.filter(e => e.quantidade < 10).slice(0, 5))
       setLoading(false)
     }
     load()

@@ -27,6 +27,12 @@ from app.schemas.venda import (
     VendaResponse,
     VendaListResponse,
 )
+from app.schemas.auditoria import (
+    AuditoriaLogCreate,
+    AuditoriaLogResponse,
+    AuditoriaLogFilter,
+    AuditoriaStatistics,
+)
 
 __all__ = [
     "UsuarioCreate",
@@ -47,4 +53,8 @@ __all__ = [
     "VendaCreate",
     "VendaResponse",
     "VendaListResponse",
+    "AuditoriaLogCreate",
+    "AuditoriaLogResponse",
+    "AuditoriaLogFilter",
+    "AuditoriaStatistics",
 ]

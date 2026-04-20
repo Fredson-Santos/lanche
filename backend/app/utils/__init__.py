@@ -18,6 +18,13 @@ from app.utils.validators import (
     validate_preco,
     validate_quantidade,
 )
+from app.utils.audit import (
+    registrar_evento_auditoria,
+    registrar_login_bem_sucedido,
+    registrar_falha_login,
+    registrar_operacao_crud,
+    registrar_acesso_negado,
+)
 
 __all__ = [
     "UsuarioNaoEncontrado",
@@ -35,4 +42,9 @@ __all__ = [
     "validate_username",
     "validate_preco",
     "validate_quantidade",
+    "registrar_evento_auditoria",
+    "registrar_login_bem_sucedido",
+    "registrar_falha_login",
+    "registrar_operacao_crud",
+    "registrar_acesso_negado",
 ]

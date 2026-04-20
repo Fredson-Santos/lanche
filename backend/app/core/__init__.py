@@ -10,6 +10,7 @@ from app.core.security import (
     create_access_token,
     verify_token,
 )
+from app.core.logging import StructuredLogger, AuditJsonFormatter, audit_logger
 
 __all__ = [
     "Settings",
@@ -21,4 +22,7 @@ __all__ = [
     "verify_password",
     "create_access_token",
     "verify_token",
+    "StructuredLogger",
+    "AuditJsonFormatter",
+    "audit_logger",
 ]

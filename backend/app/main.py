@@ -9,10 +9,11 @@ from contextlib import asynccontextmanager
 
 from app.core import settings, logger
 from app.db.database import Base, engine, get_db
-from app.models import Usuario, Produto, Estoque, Venda, ItemVenda, AuditoriaLog
+from app.models import Usuario, Produto, Estoque, Venda, ItemVenda, AuditoriaLog, Alerta, OrdemReposicao
 from app.middleware import AuditMiddleware
 from app.db.init_db import init_db
-from app.routes import auth, usuarios, produtos, estoque, vendas, relatorios
+from app.routes import auth, usuarios, produtos, estoque, vendas, relatorios, alertas, reposicao, api_keys
+from app.utils.scheduler import iniciar_scheduler, parar_scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,7 +21,11 @@ async def lifespan(app: FastAPI):
     # Inicializa o banco com dados padrão
     db = next(get_db())
     init_db(db)
+    # Inicia o scheduler de jobs agendados
+    iniciar_scheduler()
     yield
+    # Para o scheduler ao desligar a aplicação
+    parar_scheduler()
 
 app = FastAPI(
     title="LANCHE MVP API",
@@ -48,6 +53,9 @@ app.include_router(produtos.router, prefix="/api/produtos", tags=["Produtos"])
 app.include_router(estoque.router, prefix="/api/estoque", tags=["Estoque"])
 app.include_router(vendas.router, prefix="/api/vendas", tags=["Vendas"])
 app.include_router(relatorios.router, prefix="/api/relatorios", tags=["Relatórios"])
+app.include_router(alertas.router, prefix="/api/alertas", tags=["Alertas"])
+app.include_router(reposicao.router, prefix="/api/reposicao", tags=["Reposição"])
+app.include_router(api_keys.router, prefix="/api/keys", tags=["API Keys"])
 
 @app.get("/", tags=["root"])
 async def root():

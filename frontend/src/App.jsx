@@ -10,6 +10,7 @@ import { ProdutosPage }  from './pages/ProdutosPage'
 import { EstoquePage }   from './pages/EstoquePage'
 import { RelatoriosPage } from './pages/RelatoriosPage'
 import { UsuariosPage }  from './pages/UsuariosPage'
+import { ReposicaoPage } from './pages/ReposicaoPage'
 
 import './styles/index.css'
 
@@ -32,6 +33,7 @@ function App() {
         {/* Protected — Gerente and Admin */}
         <Route element={<ProtectedRoute roles={['admin', 'gerente']} />}>
           <Route path="/relatorios" element={<RelatoriosPage />} />
+          <Route path="/reposicao" element={<ReposicaoPage />} />
         </Route>
 
         {/* Protected — Admin only */}

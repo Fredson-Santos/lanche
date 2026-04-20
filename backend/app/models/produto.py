@@ -12,6 +12,11 @@ class Produto(Base):
     preco = Column(Float, nullable=False)
     categoria = Column(String(100), nullable=False, default="outros")
     ativo = Column(Boolean, default=True, index=True)
+    # Novos campos para alertas (RF-01, RF-02, RF-03)
+    data_validade = Column(DateTime(timezone=True), nullable=True)
+    lote = Column(String(100), nullable=True)
+    temperatura_ideal_min = Column(Float, nullable=True)
+    temperatura_ideal_max = Column(Float, nullable=True)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(
         DateTime(timezone=True),

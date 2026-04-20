@@ -4,10 +4,10 @@ Fornece funções para validação de JWT e controle de acesso baseado em role (
 """
 
 from datetime import datetime, timedelta, timezone
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, HTTPBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
@@ -15,7 +15,13 @@ from app.core.config import settings
 from app.core.security import verify_password
 from app.db.database import get_db
 from app.models.usuario import Usuario
+from app.models.api_key import APIKey
 from app.schemas.usuario import UsuarioResponse
+from app.utils.api_keys import (
+    verificar_api_key as check_api_key,
+    verificar_rate_limit,
+    registrar_uso_api_key,
+)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
@@ -129,3 +135,61 @@ def require_role(*allowed_roles: str):
 require_admin = require_role("admin")
 require_gerente = require_role("admin", "gerente")
 require_caixa = require_role("admin", "gerente", "caixa")
+require_vendedor = require_role("admin", "gerente", "caixa", "vendedor")
+
+
+# ============================================================================
+# Autenticação por API Key (RF-11 - APIs Abertas para Terceiros)
+# ============================================================================
+
+from fastapi.security import HTTPBearer
+from typing import Optional
+
+http_bearer = HTTPBearer(auto_error=False)
+
+
+async def verify_api_key(
+    credentials: Optional[dict] = Depends(http_bearer),
+    db: Session = Depends(get_db),
+) -> APIKey:
+    """
+    Valida uma API key fornecida no header de autenticação.
+    
+    Uso:
+        GET /api/endpoint
+        Headers: Authorization: Bearer <API_KEY>
+    
+    Returns:
+        APIKey validada
+    
+    Raises:
+        HTTPException: Se a chave for inválida, expirada ou rate limit excedido
+    """
+    if not credentials or not hasattr(credentials, 'credentials') or not credentials.credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="API Key não fornecida",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    chave = credentials.credentials
+    api_key = check_api_key(db=db, chave=chave)
+    
+    if not api_key:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="API Key inválida ou inativa",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    # Verificar rate limit
+    if not verificar_rate_limit(db=db, chave_id=api_key.id):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Limite de requisições excedido. Limite: {api_key.limite_requisicoes} por {api_key.janela_tempo} minutos"
+        )
+    
+    # Registrar uso
+    registrar_uso_api_key(db=db, chave_id=api_key.id)
+    
+    return api_key

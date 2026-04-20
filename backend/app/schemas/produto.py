@@ -7,6 +7,11 @@ class ProdutoCreate(BaseModel):
     descricao: str | None = None
     preco: float = Field(..., gt=0)
     categoria: str = Field(default="outros", max_length=100)
+    # Novos campos para alertas (RF-01, RF-02)
+    data_validade: datetime | None = None
+    lote: str | None = Field(None, max_length=100)
+    temperatura_ideal_min: float | None = None
+    temperatura_ideal_max: float | None = None
 
 
 class ProdutoUpdate(BaseModel):
@@ -15,6 +20,11 @@ class ProdutoUpdate(BaseModel):
     preco: float | None = Field(None, gt=0)
     categoria: str | None = Field(None, max_length=100)
     ativo: bool | None = None
+    # Campos de alerta para atualização
+    data_validade: datetime | None = None
+    lote: str | None = Field(None, max_length=100)
+    temperatura_ideal_min: float | None = None
+    temperatura_ideal_max: float | None = None
 
 
 class ProdutoResponse(BaseModel):
@@ -24,6 +34,10 @@ class ProdutoResponse(BaseModel):
     preco: float
     categoria: str
     ativo: bool
+    data_validade: datetime | None
+    lote: str | None
+    temperatura_ideal_min: float | None
+    temperatura_ideal_max: float | None
     data_criacao: datetime
     data_atualizacao: datetime
 

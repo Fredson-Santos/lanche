@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, CheckConstraint
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, CheckConstraint, Float
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.db.database import Base
@@ -10,6 +10,13 @@ class Estoque(Base):
     id = Column(Integer, primary_key=True, index=True)
     produto_id = Column(Integer, ForeignKey("produtos.id", ondelete="CASCADE"), unique=True, nullable=False, index=True)
     quantidade = Column(Integer, default=0, nullable=False)
+    # Campos para reposição automática (RF-06)
+    estoque_minimo = Column(Integer, default=0, nullable=False)
+    estoque_maximo = Column(Integer, default=100, nullable=False)
+    ponto_reposicao = Column(Integer, default=10, nullable=False)
+    # Campos para alertas (RF-02, RF-03)
+    temperatura_atual = Column(Float, nullable=True)
+    data_ultima_verificacao = Column(DateTime(timezone=True), nullable=True)
     data_atualizacao = Column(
         DateTime(timezone=True),
         server_default=func.now(),

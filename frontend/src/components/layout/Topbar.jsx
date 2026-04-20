@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { RoleBadge } from '../ui/Badge'
+import { AlertasBadge } from '../ui/AlertasBadge'
 import { Button } from '../ui/Button'
 
 const PAGE_TITLES = {
@@ -34,6 +35,7 @@ export function Topbar() {
       </div>
       {user && (
         <div className="topbar-right">
+          <AlertasBadge />
           <RoleBadge role={user.role} />
           <div 
             className="topbar-user" 

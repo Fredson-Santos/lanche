@@ -9,7 +9,8 @@ from contextlib import asynccontextmanager
 
 from app.core import settings, logger
 from app.db.database import Base, engine, get_db
-from app.models import Usuario, Produto, Estoque, Venda, ItemVenda
+from app.models import Usuario, Produto, Estoque, Venda, ItemVenda, AuditoriaLog
+from app.middleware import AuditMiddleware
 from app.db.init_db import init_db
 from app.routes import auth, usuarios, produtos, estoque, vendas, relatorios
 
@@ -27,6 +28,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Middleware de Auditoria (deve ser adicionado antes de outros middlewares)
+app.add_middleware(AuditMiddleware)
 
 # CORS configuration
 app.add_middleware(

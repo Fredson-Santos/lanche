@@ -10,13 +10,13 @@ from sqlalchemy.orm import Session
 from app.api.deps import require_gerente
 from app.db.database import get_db
 from app.models.estoque import Estoque
-from app.schemas.estoque import EstoqueResponse, EstoqueUpdate
+from app.schemas.estoque import EstoqueResponse, EstoqueUpdate, EstoqueComProdutoResponse
 from app.schemas.usuario import UsuarioResponse
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[EstoqueResponse])
+@router.get("/", response_model=List[EstoqueComProdutoResponse])
 async def listar_estoque(
     db: Annotated[Session, Depends(get_db)],
 ):
@@ -30,7 +30,7 @@ async def listar_estoque(
         Lista de estoque
     """
     estoque = db.query(Estoque).all()
-    return [EstoqueResponse.from_orm(e) for e in estoque]
+    return estoque
 
 
 @router.get("/{produto_id}", response_model=EstoqueResponse)
@@ -58,7 +58,7 @@ async def obter_estoque_produto(
             detail="Estoque não encontrado para este produto",
         )
 
-    return EstoqueResponse.from_orm(estoque)
+    return estoque
 
 
 @router.put("/{produto_id}", response_model=EstoqueResponse)
@@ -100,4 +100,4 @@ async def atualizar_estoque(
     db.commit()
     db.refresh(estoque)
 
-    return EstoqueResponse.from_orm(estoque)
+    return estoque

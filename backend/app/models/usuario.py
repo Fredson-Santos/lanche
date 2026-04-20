@@ -2,6 +2,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.sql import func
 from app.db.database import Base
+from app.db.encryption_models import EncryptedString
 
 
 class Usuario(Base):
@@ -9,7 +10,8 @@ class Usuario(Base):
     __tablename__ = "usuarios"
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(255), unique=True, index=True, nullable=False)
+    email = Column("email_encrypted", EncryptedString(255), nullable=False)  # Mapeia para coluna email_encrypted, encriptada
+    email_hash = Column(String(64), nullable=False, index=True)  # Para buscas rápidas
     username = Column(String(100), unique=True, index=True, nullable=False)
     senha_hash = Column(String(255), nullable=False)
     role = Column(String(20), nullable=False, default="caixa")

@@ -1,0 +1,93 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-7.4.3, pluggy-1.6.0 -- C:\Users\Fred\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Fred\Projetos\lanche\backend
+plugins: anyio-3.7.1, asyncio-0.21.1, cov-4.1.0
+asyncio: mode=Mode.STRICT
+collecting ... collected 40 items
+
+tests/test_api_keys.py::TestGeracaoChaves::test_gerar_chave_api PASSED   [  2%]
+tests/test_api_keys.py::TestGeracaoChaves::test_chaves_unicas PASSED     [  5%]
+tests/test_api_keys.py::TestCriacaoChaves::test_criar_api_key_com_defaults PASSED [  7%]
+tests/test_api_keys.py::TestCriacaoChaves::test_criar_api_key_com_expiacao PASSED [ 10%]
+tests/test_api_keys.py::TestCriacaoChaves::test_criar_api_key_com_limites_customizados PASSED [ 12%]
+tests/test_api_keys.py::TestVerificacaoChaves::test_verificar_chave_valida PASSED [ 15%]
+tests/test_api_keys.py::TestVerificacaoChaves::test_verificar_chave_invalida PASSED [ 17%]
+tests/test_api_keys.py::TestVerificacaoChaves::test_verificar_chave_inativa PASSED [ 20%]
+tests/test_api_keys.py::TestVerificacaoChaves::test_verificar_chave_expirada PASSED [ 22%]
+tests/test_api_keys.py::TestRateLimiting::test_rate_limit_dentro_do_limite PASSED [ 25%]
+tests/test_api_keys.py::TestRateLimiting::test_rate_limit_excedido PASSED [ 27%]
+tests/test_api_keys.py::TestRateLimiting::test_registrar_uso_incrementa_contador PASSED [ 30%]
+tests/test_api_keys.py::TestRateLimiting::test_resetar_contador PASSED   [ 32%]
+tests/test_api_keys.py::TestRevogacaoChaves::test_revogar_chave PASSED   [ 35%]
+tests/test_api_keys.py::TestRevogacaoChaves::test_nao_pode_usar_chave_revogada PASSED [ 37%]
+tests/test_api_keys.py::TestGerenciamentoChaves::test_obter_todas_chaves PASSED [ 40%]
+tests/test_api_keys.py::TestGerenciamentoChaves::test_obter_apenas_chaves_ativas PASSED [ 42%]
+tests/test_api_keys.py::TestGerenciamentoChaves::test_limpar_chaves_expiradas PASSED [ 45%]
+tests/test_api_keys.py::TestEstadoChaves::test_chave_ativa_nao_expirada PASSED [ 47%]
+tests/test_api_keys.py::TestEstadoChaves::test_chave_inativa PASSED      [ 50%]
+tests/test_api_keys.py::TestEstadoChaves::test_chave_expirada_nao_ativa PASSED [ 52%]
+tests/test_alertas.py::TestAlertasValidade::test_criar_alerta_produto_vencido PASSED [ 55%]
+tests/test_alertas.py::TestAlertasValidade::test_criar_alerta_produto_proximo_vencer PASSED [ 57%]
+tests/test_alertas.py::TestAlertasValidade::test_nao_criar_alerta_produto_com_validade_ok PASSED [ 60%]
+tests/test_alertas.py::TestAlertasValidade::test_nao_criar_alerta_duplicado PASSED [ 62%]
+tests/test_alertas.py::TestAlertasTemperatura::test_criar_alerta_temperatura_abaixo_minima PASSED [ 65%]
+tests/test_alertas.py::TestAlertasTemperatura::test_criar_alerta_temperatura_acima_maxima PASSED [ 67%]
+tests/test_alertas.py::TestAlertasTemperatura::test_nao_criar_alerta_temperatura_ok PASSED [ 70%]
+tests/test_alertas.py::TestGerenciamentoAlertas::test_marcar_alerta_como_lido PASSED [ 72%]
+tests/test_alertas.py::TestGerenciamentoAlertas::test_limpar_alerta_resolvido PASSED [ 75%]
+tests/test_alertas.py::TestGerenciamentoAlertas::test_obter_alertas_ativos PASSED [ 77%]
+tests/test_alertas.py::TestGerenciamentoAlertas::test_obter_alertas_ativos_por_produto PASSED [ 80%]
+tests/test_reposicao.py::TestReposicaoAutomatica::test_criar_ordem_reposicao_manual PASSED [ 82%]
+tests/test_reposicao.py::TestReposicaoAutomatica::test_verificar_estoques_abaixo_minimo PASSED [ 85%]
+tests/test_reposicao.py::TestReposicaoAutomatica::test_nao_criar_ordem_duplicada PASSED [ 87%]
+tests/test_reposicao.py::TestReposicaoAutomatica::test_confirmando_ordem PASSED [ 90%]
+tests/test_reposicao.py::TestReposicaoAutomatica::test_receber_ordem_completa PASSED [ 92%]
+tests/test_reposicao.py::TestReposicaoAutomatica::test_receber_ordem_parcial PASSED [ 95%]
+tests/test_reposicao.py::TestReposicaoAutomatica::test_cancelar_ordem PASSED [ 97%]
+tests/test_reposicao.py::TestReposicaoAutomatica::test_obter_ordens_pendentes PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pydantic\_internal\_config.py:268: 18 warnings
+  C:\Users\Fred\AppData\Local\Programs\Python\Python312\Lib\site-packages\pydantic\_internal\_config.py:268: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.5/migration/
+    warnings.warn(DEPRECATION_MESSAGE, DeprecationWarning)
+
+app\db\database.py:24
+  C:\Users\Fred\Projetos\lanche\backend\app\db\database.py:24: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Base = declarative_base()
+
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\pydantic\fields.py:768
+  C:\Users\Fred\AppData\Local\Programs\Python\Python312\Lib\site-packages\pydantic\fields.py:768: PydanticDeprecatedSince20: `min_items` is deprecated and will be removed, use `min_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.5/migration/
+    warn('`min_items` is deprecated and will be removed, use `min_length` instead', DeprecationWarning)
+
+tests/test_api_keys.py::TestCriacaoChaves::test_criar_api_key_com_expiacao
+  C:\Users\Fred\Projetos\lanche\backend\tests\test_api_keys.py:63: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    expires = datetime.utcnow() + timedelta(days=30)
+
+tests/test_api_keys.py::TestVerificacaoChaves::test_verificar_chave_expirada
+  C:\Users\Fred\Projetos\lanche\backend\tests\test_api_keys.py:116: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    expires = datetime.utcnow() - timedelta(days=1)  # Expirou
+
+tests/test_api_keys.py::TestVerificacaoChaves::test_verificar_chave_expirada
+tests/test_api_keys.py::TestEstadoChaves::test_chave_expirada_nao_ativa
+  C:\Users\Fred\Projetos\lanche\backend\app\models\api_key.py:57: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    return datetime.utcnow() > self.expires_em
+
+tests/test_api_keys.py::TestRateLimiting::test_registrar_uso_incrementa_contador
+  C:\Users\Fred\Projetos\lanche\backend\app\utils\api_keys.py:120: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    api_key.ultima_uso = datetime.utcnow()
+
+tests/test_api_keys.py::TestGerenciamentoChaves::test_limpar_chaves_expiradas
+  C:\Users\Fred\Projetos\lanche\backend\tests\test_api_keys.py:223: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    expires = datetime.utcnow() - timedelta(days=35)
+
+tests/test_api_keys.py::TestGerenciamentoChaves::test_limpar_chaves_expiradas
+  C:\Users\Fred\Projetos\lanche\backend\app\utils\api_keys.py:261: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    data_limite = datetime.utcnow() - timedelta(days=dias_retencao)
+
+tests/test_api_keys.py::TestEstadoChaves::test_chave_expirada_nao_ativa
+  C:\Users\Fred\Projetos\lanche\backend\tests\test_api_keys.py:260: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    expires = datetime.utcnow() - timedelta(hours=1)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 40 passed, 28 warnings in 0.68s =======================

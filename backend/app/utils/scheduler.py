@@ -18,7 +18,7 @@ scheduler = BackgroundScheduler()
 def iniciar_scheduler():
     """Inicializa o scheduler de jobs agendados"""
     if scheduler.running:
-        logger.info("Scheduler já está rodando")
+        audit_logger.info("Scheduler já está rodando")
         return
     
     # Job para verificar alertas de validade a cada 15 minutos
@@ -52,14 +52,14 @@ def iniciar_scheduler():
     )
     
     scheduler.start()
-    logger.info("Scheduler iniciado com sucesso")
+    audit_logger.info("Scheduler iniciado com sucesso")
 
 
 def parar_scheduler():
     """Para o scheduler"""
     if scheduler.running:
         scheduler.shutdown()
-        logger.info("Scheduler parado")
+        audit_logger.info("Scheduler parado")
 
 
 def job_verificar_alertas_validade():
@@ -67,9 +67,9 @@ def job_verificar_alertas_validade():
     try:
         db = next(get_db())
         alertas = verificar_alertas_validade(db)
-        logger.info(f"Job verificar_alertas_validade executado: {len(alertas)} alertas criados/atualizados")
+        audit_logger.info(f"Job verificar_alertas_validade executado: {len(alertas)} alertas criados/atualizados")
     except Exception as e:
-        logger.error(f"Erro ao verificar alertas de validade: {str(e)}")
+        audit_logger.error(f"Erro ao verificar alertas de validade: {str(e)}")
     finally:
         db.close()
 
@@ -79,9 +79,9 @@ def job_verificar_alertas_temperatura():
     try:
         db = next(get_db())
         alertas = verificar_alertas_temperatura(db)
-        logger.info(f"Job verificar_alertas_temperatura executado: {len(alertas)} alertas criados/atualizados")
+        audit_logger.info(f"Job verificar_alertas_temperatura executado: {len(alertas)} alertas criados/atualizados")
     except Exception as e:
-        logger.error(f"Erro ao verificar alertas de temperatura: {str(e)}")
+        audit_logger.error(f"Erro ao verificar alertas de temperatura: {str(e)}")
     finally:
         db.close()
 
@@ -91,8 +91,8 @@ def job_verificar_estoques_minimos():
     try:
         db = next(get_db())
         ordens = verificar_estoques_minimos(db)
-        logger.info(f"Job verificar_estoques_minimos executado: {len(ordens)} ordens de reposição criadas")
+        audit_logger.info(f"Job verificar_estoques_minimos executado: {len(ordens)} ordens de reposição criadas")
     except Exception as e:
-        logger.error(f"Erro ao verificar estoques mínimos: {str(e)}")
+        audit_logger.error(f"Erro ao verificar estoques mínimos: {str(e)}")
     finally:
         db.close()

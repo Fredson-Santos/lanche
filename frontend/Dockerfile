@@ -1,18 +1,22 @@
-# Dockerfile para o frontend React + Vite
-FROM node:20-alpine AS builder
+# Dockerfile para o frontend React + Vite (Desenvolvimento)
+FROM node:20-alpine
 
 WORKDIR /app
+
+# Garantir que os binários do npm estejam no PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# Copiar arquivos de dependências
 COPY package*.json ./
+
+# Instalar TODAS as dependências (incluindo Vite)
 RUN npm install
 
+# Copiar o resto dos arquivos
 COPY . .
-RUN npm run build
 
-FROM node:20-alpine
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-COPY package*.json ./
-RUN npm install --only=production
-
+# Expor a porta do Vite
 EXPOSE 5173
-CMD ["npm", "run", "preview"]
+
+# Comando para desenvolvimento
+CMD ["npm", "run", "dev", "--", "--host"]

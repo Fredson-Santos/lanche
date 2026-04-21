@@ -1,14 +1,12 @@
-version: '3.8'
-
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: lanche-backend
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8008 --reload
     ports:
-      - "8000:8000"
+      - "8008:8008"
     environment:
       SECRET_KEY: dev-secret-key-change-in-prod
     volumes:
@@ -21,13 +19,14 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: lanche-frontend
-    command: npm run dev
+    command: npm run dev -- --host
     ports:
       - "5173:5173"
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     environment:
-      VITE_API_URL: http://localhost:8000
+      - NODE_ENV=development
     networks:
       - lanche-network
 

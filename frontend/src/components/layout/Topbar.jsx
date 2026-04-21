@@ -35,7 +35,7 @@ export function Topbar() {
       </div>
       {user && (
         <div className="topbar-right">
-          <AlertasBadge />
+          {(user.role === 'admin' || user.role === 'gerente') && <AlertasBadge />}
           <RoleBadge role={user.role} />
           <div 
             className="topbar-user" 

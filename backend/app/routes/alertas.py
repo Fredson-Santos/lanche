@@ -20,7 +20,7 @@ from app.utils.alertas import (
     limpar_alertas_resolvidos,
     obter_alertas_ativos,
 )
-from app.core.logging import audit_logger
+from app.core.logging import audit_logger as logger
 
 router = APIRouter()
 
@@ -34,21 +34,12 @@ async def obter_resumo_alertas(
     Obtém resumo dos alertas para o dashboard.
     
     Retorna:
-        - Total de alertas ativos
+        - Total de alertas ativos (pendentes)
         - Alertas por tipo
         - Produtos com alertas
-        
-    Args:
-        db: Sessão do banco de dados
-        current_user: Usuário autenticado
-        
-    Returns:
-        Resumo de alertas
     """
-    alertas_ativos = db.query(Alerta).filter(
-        Alerta.ativo == True,
-        Alerta.lido == False
-    ).all()
+    # Agora considera "pendência" qualquer alerta que ainda esteja ATIVO (não resolvido)
+    alertas_ativos = db.query(Alerta).filter(Alerta.ativo == True).all()
     
     # Agrupa alertas por tipo
     alertas_por_tipo = {}
@@ -63,6 +54,7 @@ async def obter_resumo_alertas(
     
     return {
         "total_alertas": len(alertas_ativos),
+        "total_nao_lidos": len([a for a in alertas_ativos if not a.lido]),
         "alertas_por_tipo": alertas_por_tipo,
         "produtos_com_alertas": produtos_com_alertas,
     }
@@ -72,37 +64,37 @@ async def obter_resumo_alertas(
 async def listar_alertas(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[UsuarioResponse, Depends(require_vendedor)] = None,
-    apenas_ativos: bool = True,
+    apenas_ativos: bool | None = None,
+    lido: bool | None = None,
+    ativo: bool | None = None,
     produto_id: int | None = None,
 ):
     """
     Lista alertas do sistema.
     
-    - Usuários vendedor/gerente/admin podem visualizar todos os alertas
-    - Parâmetro `apenas_ativos=true` mostra apenas alertas não lidos
-    - Parâmetro `produto_id` filtra alertas de um produto específico
-    
-    Args:
-        db: Sessão do banco de dados
-        current_user: Usuário autenticado
-        apenas_ativos: Se True, mostra apenas alertas não lidos e ativos
-        produto_id: ID do produto para filtrar (opcional)
-        
-    Returns:
-        Lista de alertas
+    - Parâmetro `apenas_ativos=true` (legacy): lido=False e ativo=True
+    - Parâmetro `lido`: filtra por status de leitura
+    - Parâmetro `ativo`: filtra por status de resolução
     """
     query = db.query(Alerta)
     
-    if apenas_ativos:
+    # Lógica de compatibilidade e novos filtros
+    if apenas_ativos is True:
         query = query.filter(Alerta.ativo == True, Alerta.lido == False)
+    elif apenas_ativos is False:
+        pass # Mostra todos
+    else:
+        # Se não usar apenas_ativos, usa os filtros individuais
+        if lido is not None:
+            query = query.filter(Alerta.lido == lido)
+        if ativo is not None:
+            query = query.filter(Alerta.ativo == ativo)
     
     if produto_id:
         query = query.filter(Alerta.produto_id == produto_id)
     
     alertas = query.order_by(Alerta.data_criacao.desc()).all()
-    
     logger.info(f"Usuário {current_user.id} listou {len(alertas)} alertas")
-    
     return alertas
 
 

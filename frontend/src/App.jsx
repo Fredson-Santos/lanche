@@ -11,6 +11,8 @@ import { EstoquePage }   from './pages/EstoquePage'
 import { RelatoriosPage } from './pages/RelatoriosPage'
 import { UsuariosPage }  from './pages/UsuariosPage'
 import { ReposicaoPage } from './pages/ReposicaoPage'
+import { AlertasPage } from './pages/AlertasPage'
+import { ApiKeysPage } from './pages/ApiKeysPage'
 
 import './styles/index.css'
 
@@ -34,11 +36,13 @@ function App() {
         <Route element={<ProtectedRoute roles={['admin', 'gerente']} />}>
           <Route path="/relatorios" element={<RelatoriosPage />} />
           <Route path="/reposicao" element={<ReposicaoPage />} />
+          <Route path="/alertas" element={<AlertasPage />} />
         </Route>
 
         {/* Protected — Admin only */}
         <Route element={<ProtectedRoute roles={['admin']} />}>
           <Route path="/usuarios" element={<UsuariosPage />} />
+          <Route path="/integracoes" element={<ApiKeysPage />} />
         </Route>
 
         {/* Fallback */}

@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, require_admin
-from app.core.logging import audit_logger
+from app.core.logging import audit_logger as logger
 from app.models.api_key import APIKey
 from app.schemas.api_key import (
     APIKeyCreate,
@@ -58,7 +58,7 @@ async def criar_chave(
         )
         
         if not nova_chave:
-            audit_logger.error("Erro ao criar API Key")
+            logger.error("Erro ao criar API Key")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Erro ao criar chave de API"
@@ -78,7 +78,7 @@ async def criar_chave(
     except HTTPException:
         raise
     except Exception as e:
-        audit_logger.error(f"Erro inesperado ao criar API Key: {str(e)}")
+        logger.error(f"Erro inesperado ao criar API Key: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erro interno do servidor"
@@ -127,7 +127,7 @@ async def listar_chaves(
         return response
     
     except Exception as e:
-        audit_logger.error(f"Erro ao listar API Keys: {str(e)}")
+        logger.error(f"Erro ao listar API Keys: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erro ao listar chaves de API"
@@ -158,12 +158,12 @@ async def obter_chave(
                 detail="Chave de API não encontrada"
             )
         
-        return APIKeyResponse.model_validate(api_key)
+        return APIKeyResponse.from_orm(api_key)
     
     except HTTPException:
         raise
     except Exception as e:
-        audit_logger.error(f"Erro ao obter API Key: {str(e)}")
+        logger.error(f"Erro ao obter API Key: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erro ao obter chave de API"
@@ -212,15 +212,15 @@ async def atualizar_chave(
         db.commit()
         db.refresh(api_key)
         
-        audit_logger.info(f"API Key atualizada: {api_key.chave[:8]}...")
+        logger.info(f"API Key atualizada: {api_key.chave[:8]}...")
         
-        return APIKeyResponse.model_validate(api_key)
+        return APIKeyResponse.from_orm(api_key)
     
     except HTTPException:
         raise
     except Exception as e:
         db.rollback()
-        audit_logger.error(f"Erro ao atualizar API Key: {str(e)}")
+        logger.error(f"Erro ao atualizar API Key: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erro ao atualizar chave de API"
@@ -231,7 +231,7 @@ async def atualizar_chave(
     "/{chave_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Revogar API Key",
-    description="Revoga (desativa) uma chave de API de forma permanente"
+    description="Remove permanentemente uma chave de API do sistema"
 )
 async def revogar_chave(
     chave_id: int,
@@ -240,11 +240,11 @@ async def revogar_chave(
     _: None = Depends(require_admin),
 ):
     """
-    Revoga uma chave de API, impedindo futuros acessos.
+    Exclui permanentemente uma chave de API, interrompendo qualquer acesso futuro.
     
-    - **motivo**: Motivo da revogação (opcional)
+    - **motivo**: Motivo da exclusão (opcional)
     
-    A chave continua no banco para auditoria, mas fica marcada como inativa.
+    A ação é irreversível. Se precisar apenas pausar o acesso, use o endpoint de atualização (ativo=false).
     """
     try:
         api_key = db.query(APIKey).filter(APIKey.id == chave_id).first()
@@ -268,7 +268,7 @@ async def revogar_chave(
     except HTTPException:
         raise
     except Exception as e:
-        audit_logger.error(f"Erro ao revogar API Key: {str(e)}")
+        logger.error(f"Erro ao revogar API Key: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erro ao revogar chave de API"
@@ -314,7 +314,7 @@ async def obter_resumo_stats(
         }
     
     except Exception as e:
-        audit_logger.error(f"Erro ao gerar resumo de stats: {str(e)}")
+        logger.error(f"Erro ao gerar resumo de stats: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erro ao gerar estatísticas"

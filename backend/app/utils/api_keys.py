@@ -193,12 +193,12 @@ def resetar_contador_requisicoes(db: Session, chave_id: int) -> bool:
 
 def revogar_api_key(db: Session, chave_id: int, motivo: str | None = None) -> bool:
     """
-    Revoga (desativa) uma chave de API
+    Revoga (exclui permanentemente) uma chave de API
     
     Args:
         db: Sessão do banco de dados
         chave_id: ID da chave
-        motivo: Motivo da revogação (opcional)
+        motivo: Motivo da revogação (opcional, para log)
     
     Returns:
         bool: True se sucesso, False se erro
@@ -209,20 +209,21 @@ def revogar_api_key(db: Session, chave_id: int, motivo: str | None = None) -> bo
         if not api_key:
             return False
         
-        api_key.ativo = False
-        db.commit()
-        
+        # Auditoria antes de excluir
         audit_logger.info(
-            f"API Key revogada: {api_key.chave[:8]}... (motivo: {motivo or 'não especificado'})",
-            event="api_key_revoked",
+            f"API Key SENDO EXCLUÍDA: {api_key.chave[:8]}... (motivo: {motivo or 'não especificado'})",
+            event="api_key_deleted",
             chave_id=chave_id
         )
+        
+        db.delete(api_key)
+        db.commit()
         
         return True
     
     except Exception as e:
         db.rollback()
-        audit_logger.error(f"Erro ao revogar API Key: {str(e)}")
+        audit_logger.error(f"Erro ao revogar/excluir API Key: {str(e)}")
         return False
 
 

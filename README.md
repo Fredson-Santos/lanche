@@ -4,8 +4,14 @@
 > **Sistema de Gestão para Varejo Alimentício**  
 > Produto Viável Mínimo com Autenticação Segura, Controle de Acesso e Gerenciamento de Vendas
 
+## 📋 Atividade Prática
+Este projeto foi desenvolvido como parte de uma atividade prática integradora. O objetivo foi aplicar conceitos de desenvolvimento full-stack e engenharia de software no cenário **LANCHE**.
+
+- [📄 Detalhes da Atividade](docs/atividade/Atividade-a-Realizar/ATIVIDADE_PRATICA.md)
+- [📖 Cenário de Referência](docs/atividade/Atividade-a-Realizar/Cenario.md)
 
 ## 🎯 Objetivo
+
 
 Desenvolver um sistema simplificado e funcional para gestão de vendas em lojas de varejo alimentício, com foco em:
 - ✅ Autenticação segura (JWT + bcrypt)

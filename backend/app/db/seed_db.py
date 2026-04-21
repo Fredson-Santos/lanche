@@ -1,6 +1,8 @@
 """
 Script de seed para popular o banco de dados com dados iniciais
 Pode ser executado independentemente: python seed_db.py
+Cria dados completos para: Usuários, Produtos, Estoques, Vendas, 
+Alertas, API Keys, Ordens de Reposição e Auditoria
 """
 
 from sqlalchemy.orm import Session
@@ -12,8 +14,14 @@ from app.models.produto import Produto
 from app.models.estoque import Estoque
 from app.models.venda import Venda
 from app.models.item_venda import ItemVenda
+from app.models.alerta import Alerta, TipoAlerta
+from app.models.api_key import APIKey
+from app.models.ordem_reposicao import OrdemReposicao, StatusOrdemReposicao
+from app.models.auditoria import AuditoriaLog
 from datetime import datetime, timedelta
 import random
+import uuid
+import secrets
 
 
 def criar_usuarios(db: Session):
@@ -566,12 +574,207 @@ def criar_vendas_exemplo(db: Session, usuarios, produtos):
 
 
 
+def criar_api_keys(db: Session):
+    """Cria chaves de API para terceiros"""
+    print("📝 Criando API Keys...")
+    
+    api_keys = [
+        APIKey(
+            chave=secrets.token_hex(32),
+            ativo=True,
+            limite_requisicoes=1000,
+            janela_tempo=60,
+            expires_em=datetime.now() + timedelta(days=365),
+            descricao="Delivery Partner A - Sistema de integração",
+        ),
+        APIKey(
+            chave=secrets.token_hex(32),
+            ativo=True,
+            limite_requisicoes=500,
+            janela_tempo=60,
+            expires_em=datetime.now() + timedelta(days=180),
+            descricao="Mobile App - Versão pública",
+        ),
+        APIKey(
+            chave=secrets.token_hex(32),
+            ativo=True,
+            limite_requisicoes=5000,
+            janela_tempo=60,
+            expires_em=None,  # Sem expiração
+            descricao="Dashboard administrativo - Sem limite",
+        ),
+        APIKey(
+            chave=secrets.token_hex(32),
+            ativo=False,
+            limite_requisicoes=100,
+            janela_tempo=60,
+            expires_em=datetime.now() - timedelta(days=30),
+            descricao="Parceiro descontinuado - Revogada",
+        ),
+        APIKey(
+            chave=secrets.token_hex(32),
+            ativo=True,
+            limite_requisicoes=2000,
+            janela_tempo=60,
+            expires_em=datetime.now() + timedelta(days=90),
+            descricao="Sistema de relatórios - Teste",
+        ),
+    ]
+    
+    for api_key in api_keys:
+        db.add(api_key)
+    
+    db.commit()
+    print(f"✅ {len(api_keys)} API Keys criadas")
+    return api_keys
+
+
+def criar_alertas_estoque(db: Session, estoques):
+    """Cria alertas de estoque mínimo e validade"""
+    print("📝 Criando alertas...")
+    
+    alertas = []
+    
+    # Criar alertas de estoque mínimo para alguns produtos com baixo estoque
+    for i, estoque in enumerate(estoques[:10]):  # Primeiros 10 estoques
+        if estoque.quantidade < 20:
+            alerta = Alerta(
+                produto_id=estoque.produto_id,
+                estoque_id=estoque.id,
+                tipo=TipoAlerta.ESTOQUE_MINIMO,
+                titulo=f"Estoque baixo - {estoque.produto.nome}",
+                descricao=f"Quantidade atual: {estoque.quantidade} unidades. Recomenda-se reposição imediata.",
+                lido=random.choice([True, False]),
+                ativo=True,
+            )
+            alertas.append(alerta)
+            db.add(alerta)
+    
+    # Criar alguns alertas de validade
+    for i in range(5):
+        produto = random.choice([e.produto for e in estoques])
+        alerta = Alerta(
+            produto_id=produto.id,
+            tipo=TipoAlerta.VALIDADE,
+            titulo=f"Produto com validade próxima - {produto.nome}",
+            descricao=f"Validade em 3 dias. Priorizar venda deste produto.",
+            lido=False,
+            ativo=True,
+        )
+        alertas.append(alerta)
+        db.add(alerta)
+    
+    db.commit()
+    print(f"✅ {len(alertas)} alertas criados")
+    return alertas
+
+
+def criar_ordens_reposicao(db: Session, produtos, estoques):
+    """Cria ordens de reposição automáticas"""
+    print("📝 Criando ordens de reposição...")
+    
+    ordens = []
+    
+    # Criar ordens para alguns produtos com baixo estoque
+    for i in range(8):
+        estoque = random.choice(estoques)
+        
+        # Simular diferentes status de ordens
+        status_opcoes = [
+            StatusOrdemReposicao.PENDENTE,
+            StatusOrdemReposicao.CONFIRMADA,
+            StatusOrdemReposicao.RECEBIDA,
+        ]
+        status = random.choice(status_opcoes)
+        
+        quantidade_solicitada = random.randint(20, 100)
+        
+        ordem = OrdemReposicao(
+            estoque_id=estoque.id,
+            produto_id=estoque.produto_id,
+            quantidade_solicitada=quantidade_solicitada,
+            quantidade_recebida=quantidade_solicitada if status == StatusOrdemReposicao.RECEBIDA else (random.randint(0, quantidade_solicitada) if status == StatusOrdemReposicao.CONFIRMADA else 0),
+            status=status,
+            motivo="automática",
+            observacoes=f"Reposição automática de {estoque.produto.nome}",
+            data_confirmacao=datetime.now() - timedelta(days=random.randint(0, 5)) if status != StatusOrdemReposicao.PENDENTE else None,
+            data_recebimento=datetime.now() - timedelta(days=random.randint(0, 3)) if status == StatusOrdemReposicao.RECEBIDA else None,
+        )
+        ordens.append(ordem)
+        db.add(ordem)
+    
+    db.commit()
+    print(f"✅ {len(ordens)} ordens de reposição criadas")
+    return ordens
+
+
+def criar_registros_auditoria(db: Session, usuarios):
+    """Cria registros de auditoria para ações do sistema"""
+    print("📝 Criando registros de auditoria...")
+    
+    event_actions = [
+        ("AUTH", "LOGIN"),
+        ("CRUD", "CREATE"),
+        ("CRUD", "UPDATE"),
+        ("CRUD", "DELETE"),
+        ("SECURITY", "API_KEY_CREATED"),
+        ("SYSTEM", "REPORT_GENERATED"),
+    ]
+    
+    resources = ["Usuario", "Produto", "Venda", "Estoque", "APIKey"]
+    
+    registros = []
+    
+    # Criar registros para os últimos 15 dias
+    for dia in range(15):
+        data_base = datetime.now() - timedelta(days=dia)
+        
+        for _ in range(random.randint(5, 15)):
+            usuario = random.choice(usuarios)
+            event_type, action = random.choice(event_actions)
+            
+            hora = random.randint(0, 23)
+            minuto = random.randint(0, 59)
+            
+            status = "SUCCESS" if random.random() > 0.1 else "FAILURE"
+            
+            registro = AuditoriaLog(
+                event_type=event_type,
+                action=action,
+                status=status,
+                user_id=usuario.id,
+                resource_type=random.choice(resources),
+                resource_id=random.randint(1, 100),
+                error_message="Falha na autenticação" if status == "FAILURE" else None,
+                context={
+                    "ip": "192.168.1." + str(random.randint(1, 254)),
+                    "user_agent": "Mozilla/5.0",
+                    "timestamp": data_base.replace(hour=hora, minute=minuto).isoformat(),
+                },
+                http_method=random.choice(["GET", "POST", "PUT", "DELETE"]),
+                http_path="/api/v1/" + random.choice(["vendas", "produtos", "estoques", "usuarios"]),
+                http_status=200 if status == "SUCCESS" else 400,
+                ip_address="192.168.1." + str(random.randint(1, 254)),
+                data_criacao=data_base.replace(hour=hora, minute=minuto),
+            )
+            registros.append(registro)
+            db.add(registro)
+    
+    db.commit()
+    print(f"✅ {len(registros)} registros de auditoria criados")
+    return registros
+
+
 def limpar_banco(db: Session):
     """Limpa todas as tabelas antes de fazer seed"""
     print("🗑️  Limpando banco de dados...")
     
     try:
-        # Deletar na ordem certa de dependências
+        # Deletar na ordem certa de dependências (foreign keys)
+        db.query(AuditoriaLog).delete()
+        db.query(OrdemReposicao).delete()
+        db.query(Alerta).delete()
+        db.query(APIKey).delete()
         db.query(ItemVenda).delete()
         db.query(Venda).delete()
         db.query(Estoque).delete()
@@ -586,9 +789,9 @@ def limpar_banco(db: Session):
 
 def seed_db():
     """Executa o seed completo do banco de dados"""
-    print("\n" + "="*60)
+    print("\n" + "="*70)
     print("🌱 INICIANDO SEED COMPLETO DO BANCO DE DADOS")
-    print("="*60 + "\n")
+    print("="*70 + "\n")
     
     # Criar todas as tabelas
     print("📋 Criando estrutura do banco...")
@@ -602,13 +805,21 @@ def seed_db():
         limpar_banco(db)
         print()
         
-        # Criar dados
+        # Criar dados na ordem correta de dependências
         usuarios = criar_usuarios(db)
         produtos = criar_produtos(db)
         estoques = criar_estoques(db, produtos)
         criar_vendas_exemplo(db, usuarios, produtos)
+        api_keys = criar_api_keys(db)
+        alertas = criar_alertas_estoque(db, estoques)
+        ordens = criar_ordens_reposicao(db, produtos, estoques)
+        registros_audit = criar_registros_auditoria(db, usuarios)
         
         # Calcular estatísticas
+        print("\n" + "="*70)
+        print("✨ SEED CONCLUÍDO COM SUCESSO!")
+        print("="*70)
+        
         total_usuarios = len(usuarios)
         total_produtos = len(produtos)
         total_estoques = len(estoques)
@@ -616,10 +827,11 @@ def seed_db():
         total_itens_vendidos = db.query(func.count(ItemVenda.id)).scalar() or 0
         total_faturado = db.query(func.sum(Venda.total)).scalar() or 0
         ticket_medio = total_faturado / total_vendas if total_vendas > 0 else 0
-        
-        print("\n" + "="*60)
-        print("✨ SEED CONCLUÍDO COM SUCESSO!")
-        print("="*60)
+        total_api_keys = len(api_keys)
+        total_alertas = len(alertas)
+        total_ordens = len(ordens)
+        total_auditorias = len(registros_audit)
+        total_estoque = db.query(func.sum(Estoque.quantidade)).scalar() or 0
         
         print("\n📊 RESUMO COMPLETO DOS DADOS CRIADOS:")
         print(f"   ├─ Usuários: {total_usuarios}")
@@ -641,10 +853,22 @@ def seed_db():
                 print(f"   │  ├─ {cat.capitalize()}: {qtd}")
         
         print(f"   ├─ Estoques: {total_estoques}")
-        print(f"   └─ Vendas: {total_vendas}")
-        print(f"      ├─ Itens vendidos: {total_itens_vendidos}")
-        print(f"      ├─ Faturamento: R$ {total_faturado:.2f}")
-        print(f"      └─ Ticket médio: R$ {ticket_medio:.2f}")
+        print(f"   │  └─ Total de itens em estoque: {total_estoque:.0f}")
+        print(f"   ├─ Vendas: {total_vendas}")
+        print(f"   │  ├─ Itens vendidos: {total_itens_vendidos}")
+        print(f"   │  ├─ Faturamento total: R$ {total_faturado:.2f}")
+        print(f"   │  └─ Ticket médio: R$ {ticket_medio:.2f}")
+        print(f"   ├─ API Keys: {total_api_keys}")
+        print(f"   │  ├─ Ativas: {len([k for k in api_keys if k.ativo])}")
+        print(f"   │  └─ Desativadas: {len([k for k in api_keys if not k.ativo])}")
+        print(f"   ├─ Alertas: {total_alertas}")
+        print(f"   │  ├─ Estoque mínimo: {len([a for a in alertas if a.tipo == TipoAlerta.ESTOQUE_MINIMO])}")
+        print(f"   │  └─ Validade: {len([a for a in alertas if a.tipo == TipoAlerta.VALIDADE])}")
+        print(f"   ├─ Ordens de Reposição: {total_ordens}")
+        print(f"   │  ├─ Pendentes: {len([o for o in ordens if o.status == StatusOrdemReposicao.PENDENTE])}")
+        print(f"   │  ├─ Confirmadas: {len([o for o in ordens if o.status == StatusOrdemReposicao.CONFIRMADA])}")
+        print(f"   │  └─ Recebidas: {len([o for o in ordens if o.status == StatusOrdemReposicao.RECEBIDA])}")
+        print(f"   └─ Registros de Auditoria: {total_auditorias}")
         
         print(f"\n🔐 CREDENCIAIS PADRÃO PARA TESTE:")
         print(f"   ├─ Admin:")
@@ -659,8 +883,15 @@ def seed_db():
         print(f"      ├─ caixa3@lanche.com / caixa789")
         print(f"      └─ caixa_noite@lanche.com / noite123")
         
+        print(f"\n🔑 PRIMEIRAS API KEYS GERADAS (use para testes):")
+        for i, key in enumerate(api_keys[:3], 1):
+            status = "✅ Ativa" if key.ativo else "❌ Desativada"
+            print(f"   {i}. {status} - {key.descricao[:40]}")
+            print(f"      Chave: {key.chave[:16]}...{key.chave[-8:]}")
+        
         print(f"\n💾 Base de dados populada com sucesso!")
-        print(f"   Dados disponíveis para teste por 30 dias\n")
+        print(f"   Dados históricos de 30 dias | API Keys com diferentes permissões")
+        print(f"   Alertas, Ordens de Reposição e Auditoria completas\n")
         
     except Exception as e:
         print(f"\n❌ Erro durante o seed: {e}")

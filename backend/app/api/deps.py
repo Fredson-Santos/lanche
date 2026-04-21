@@ -3,6 +3,7 @@ Dependências do FastAPI para autenticação e autorização
 Fornece funções para validação de JWT e controle de acesso baseado em role (RBAC)
 """
 
+import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, List, Optional
 
@@ -79,7 +80,9 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
 
-    usuario = db.query(Usuario).filter(Usuario.email == email).first()
+    # Busca o usuário pelo email_hash (email é encriptado no banco)
+    email_hash = hashlib.sha256(email.encode()).hexdigest()
+    usuario = db.query(Usuario).filter(Usuario.email_hash == email_hash).first()
     if usuario is None:
         raise credentials_exception
 

@@ -2,6 +2,7 @@
 Fixtures compartilhadas para testes - Configuração de test database e clients
 """
 
+import hashlib
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -51,8 +52,11 @@ def client(test_db: Session):
 @pytest.fixture(scope="function")
 def admin_user(test_db: Session) -> Usuario:
     """Cria um usuário admin para testes"""
+    email = "admin@test.com"
+    email_hash = hashlib.sha256(email.encode()).hexdigest()
     usuario = Usuario(
-        email="admin@test.com",
+        email=email,
+        email_hash=email_hash,
         username="admin",
         senha_hash=hash_password("senha123"),
         role="admin",
@@ -67,8 +71,11 @@ def admin_user(test_db: Session) -> Usuario:
 @pytest.fixture(scope="function")
 def gerente_user(test_db: Session) -> Usuario:
     """Cria um usuário gerente para testes"""
+    email = "gerente@test.com"
+    email_hash = hashlib.sha256(email.encode()).hexdigest()
     usuario = Usuario(
-        email="gerente@test.com",
+        email=email,
+        email_hash=email_hash,
         username="gerente",
         senha_hash=hash_password("senha123"),
         role="gerente",
@@ -83,8 +90,11 @@ def gerente_user(test_db: Session) -> Usuario:
 @pytest.fixture(scope="function")
 def caixa_user(test_db: Session) -> Usuario:
     """Cria um usuário caixa para testes"""
+    email = "caixa@test.com"
+    email_hash = hashlib.sha256(email.encode()).hexdigest()
     usuario = Usuario(
-        email="caixa@test.com",
+        email=email,
+        email_hash=email_hash,
         username="caixa",
         senha_hash=hash_password("senha123"),
         role="caixa",

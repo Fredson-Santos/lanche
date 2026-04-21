@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-export function Modal({ open, onClose, title, children, footer, size = '' }) {
+export function Modal({ open, onClose, title, icon, children, footer, size = '' }) {
   // Close on Escape
   useEffect(() => {
     if (!open) return
@@ -18,7 +18,10 @@ export function Modal({ open, onClose, title, children, footer, size = '' }) {
     >
       <div className={`modal ${size ? `modal-${size}` : ''}`}>
         <div className="modal-header">
-          <h2 className="modal-title">{title}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            {icon && <span style={{ fontSize: '1.25rem' }}>{icon}</span>}
+            <h2 className="modal-title">{title}</h2>
+          </div>
           <button className="modal-close" onClick={onClose} aria-label="Fechar">✕</button>
         </div>
         <div className="modal-body">{children}</div>

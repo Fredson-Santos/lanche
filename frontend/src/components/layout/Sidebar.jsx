@@ -8,8 +8,10 @@ const NAV_ITEMS = [
   { to: '/vendas',     label: 'Vendas',      icon: '🛒', roles: ['admin', 'gerente', 'caixa'] },
   { to: '/produtos',   label: 'Produtos',    icon: '🍔', roles: ['admin', 'gerente', 'caixa'] },
   { to: '/estoque',    label: 'Estoque',     icon: '📦', roles: ['admin', 'gerente', 'caixa'] },
+  { to: '/alertas',    label: 'Alertas',     icon: '⚠️', roles: ['admin', 'gerente'] },
   { to: '/reposicao',  label: 'Reposição',   icon: '🔄', roles: ['admin', 'gerente'] },
   { to: '/relatorios', label: 'Relatórios',  icon: '📈', roles: ['admin', 'gerente'] },
+  { to: '/integracoes', label: 'Chaves de API', icon: '🔌', roles: ['admin'] },
   { to: '/usuarios',   label: 'Usuários',    icon: '👥', roles: ['admin'] },
 ]
 

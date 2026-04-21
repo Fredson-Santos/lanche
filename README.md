@@ -1,7 +1,9 @@
 # LANCHE MVP
 
+> **Atividade Integradora / Projeto Prático**  
 > **Sistema de Gestão para Varejo Alimentício**  
 > Produto Viável Mínimo com Autenticação Segura, Controle de Acesso e Gerenciamento de Vendas
+
 
 ## 🎯 Objetivo
 

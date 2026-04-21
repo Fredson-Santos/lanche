@@ -152,7 +152,7 @@ async def obter_chave(
         api_key = db.query(APIKey).filter(APIKey.id == chave_id).first()
         
         if not api_key:
-            audit_logger.warning(f"Tentativa de acessar chave inexistente: {chave_id}")
+            logger.warning(f"Tentativa de acessar chave inexistente: {chave_id}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Chave de API não encontrada"
@@ -255,6 +255,7 @@ async def revogar_chave(
                 detail="Chave de API não encontrada"
             )
         
+        chave_prefixo = api_key.chave[:8]
         sucesso = revogar_api_key(db=db, chave_id=chave_id, motivo=motivo)
         
         if not sucesso:
@@ -263,7 +264,7 @@ async def revogar_chave(
                 detail="Erro ao revogar chave"
             )
         
-        audit_logger.info(f"API Key revogada: {api_key.chave[:8]}... (motivo: {motivo})")
+        logger.info(f"API Key revogada: {chave_prefixo}... (motivo: {motivo})")
     
     except HTTPException:
         raise
@@ -297,7 +298,7 @@ async def obter_resumo_stats(
             APIKey.requisicoes_usadas.desc()
         ).limit(5).all()
         
-        audit_logger.info(f"Resumo de stats de API Keys requisitado")
+        logger.info(f"Resumo de stats de API Keys requisitado")
         
         return {
             "total_chaves": total_chaves,

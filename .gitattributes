@@ -1,0 +1,5 @@
+# Forçar LF para scripts e arquivos de configuração do container
+*.sh text eol=lf
+backend/scripts/* text eol=lf
+backend/Dockerfile text eol=lf
+backend/alembic.ini text eol=lf

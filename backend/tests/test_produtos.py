@@ -20,6 +20,19 @@ class TestProdutosCreate:
         assert data["nome"] == produto_data["nome"]
         assert data["preco"] == produto_data["preco"]
         assert data["categoria"] == produto_data["categoria"]
+        assert data["data_validade"] is None
+
+    def test_criar_produto_com_validade(self, client: TestClient, gerente_token, produto_data):
+        """Testa criação de produto com data de validade (curta)"""
+        headers = {"Authorization": f"Bearer {gerente_token}"}
+        validade = "2026-12-31"
+        produto_data["data_validade"] = validade
+        
+        response = client.post("/api/produtos/", json=produto_data, headers=headers)
+        
+        assert response.status_code == 201
+        data = response.json()
+        assert data["data_validade"].startswith("2026-12-31")
 
     def test_criar_produto_com_admin(self, client: TestClient, admin_token, produto_data):
         """Testa criação de produto com permissão admin"""
@@ -43,7 +56,7 @@ class TestProdutosCreate:
         """Testa que usuário não autenticado não consegue criar"""
         response = client.post("/api/produtos/", json=produto_data)
         
-        assert response.status_code == 403
+        assert response.status_code == 401
 
     def test_criar_produto_dados_incompletos(self, client: TestClient, gerente_token):
         """Testa criação com dados incompletos"""
@@ -210,7 +223,7 @@ class TestProdutosDelete:
         # Deleta
         response = client.delete(f"/api/produtos/{produto_id}", headers=headers)
         
-        assert response.status_code == 200
+        assert response.status_code == 204
         
         # Verifica que foi deletado
         response = client.get(f"/api/produtos/{produto_id}")

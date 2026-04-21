@@ -12,7 +12,7 @@ from app.db.database import Base, engine, get_db
 from app.models import Usuario, Produto, Estoque, Venda, ItemVenda, AuditoriaLog, Alerta, OrdemReposicao
 from app.middleware import AuditMiddleware
 from app.db.init_db import init_db
-from app.routes import auth, usuarios, produtos, estoque, vendas, relatorios, alertas, reposicao, api_keys
+from app.routes import auth, usuarios, produtos, estoque, vendas, relatorios, alertas, reposicao, api_keys, api_test
 from app.utils.scheduler import iniciar_scheduler, parar_scheduler
 
 @asynccontextmanager
@@ -56,6 +56,7 @@ app.include_router(relatorios.router, prefix="/api/relatorios", tags=["Relatóri
 app.include_router(alertas.router, prefix="/api/alertas", tags=["Alertas"])
 app.include_router(reposicao.router, prefix="/api/reposicao", tags=["Reposição"])
 app.include_router(api_keys.router, prefix="/api/keys", tags=["API Keys"])
+app.include_router(api_test.router, prefix="/api/test", tags=["Test"])
 
 @app.get("/", tags=["root"])
 async def root():

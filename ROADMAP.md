@@ -95,7 +95,16 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 - [x] **Criptografia (TASK-2A)**: Criptografia de dados sensíveis (email) com AES-128 e Busca por Hash.
 - [x] **LGPD Lite (TASK-2B)**: Implementação de Direito de Acesso e Transparência (endpoint /me/dados).
 
-### 5.3 Deploy
+### 5.3 Modo Offline (TASK-3A - Em Progresso)
+- [x] **Validações de Estoque (UX)**: Bloqueio de produtos sem estoque, validação de quantidade máxima
+- [x] **IndexedDB com Dexie**: Schema para vendas_local e turnos
+- [x] **Sync Manual**: Funcionalidade de sincronização com backend
+- [x] **Download de Auditoria**: Export de logs em JSON
+- [x] **Limpeza de Dados**: Após fechamento e decisão do usuário
+- [ ] **Service Worker**: Cache API (próximo)
+- [ ] **Sync Automático**: Reconexão e sincronização automática (próximo)
+
+### 5.4 Deploy
 - [ ] **Docker & DevOps**: Revisar o `docker-compose.yml` e o banco em nuvem (Ex: VPS) para migrar o SQLite nativo de Dev para SQLite3 Production/Postgresql em deploy.
 
 ---

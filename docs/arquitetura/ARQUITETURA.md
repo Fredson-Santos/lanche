@@ -267,16 +267,28 @@ id, venda_id (FK), produto_id (FK), quantidade, preco_unitario, subtotal
 
 ## 🚀 Próximas Implementações
 
-1. **Logging + Auditoria** (TASK-004)
+1. **Modo Offline com Sincronização (TASK-3A)**
+   - IndexedDB para armazenamento local
+   - Service Worker para cache
+   - Sincronização automática quando reconectado
+   - Validações de estoque funcionam offline
+
+2. **Validações Avançadas de Estoque**
+   - Bloqueio de produtos sem estoque ✅
+   - Validação de quantidade máxima ✅
+   - Bloqueio de aumento acima do estoque ✅
+   - UI visual desabilitada para itens indisponíveis ✅
+
+3. **Logging + Auditoria** (TASK-004)
    - Estruturado em JSON
    - Rastreamento de ações por usuário
    - Middleware centralizado
 
-2. **Validações Avançadas**
+4. **Validações Avançadas**
    - Regras de negócio em schemas
    - Validadores customizados
 
-3. **Testes Automatizados**
+5. **Testes Automatizados**
    - Unit tests para services
    - Integration tests para rotas
 

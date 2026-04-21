@@ -18,6 +18,7 @@ Guia centralizado para navegação e referência rápida de toda a documentaçã
 | Documento | Descrição |
 |-----------|-----------|
 | [ARQUITETURA.md](docs/arquitetura/ARQUITETURA.md) | Arquitetura three-tier, fluxos, modelagem |
+| [MODO_OFFLINE.md](docs/arquitetura/MODO_OFFLINE.md) | Modo Offline: IndexedDB, Sincronização, Validações |
 | [ENCRYPTION_SETUP.md](docs/arquitetura/ENCRYPTION_SETUP.md) | Guia de configuração de criptografia de banco |
 | [Diagrama de Classes](docs/arquitetura/diagramas/01_DIAGRAMA_CLASSES_MVP.puml) | Modelagem de classes UML |
 | [Casos de Uso](docs/arquitetura/diagramas/02_DIAGRAMA_CASOS_USO_MVP.puml) | Diagrama de casos de uso |
@@ -43,7 +44,9 @@ Guia centralizado para navegação e referência rápida de toda a documentaçã
 | [TASK_1C_ALERTAS](docs/tasks/TASK_1C_ALERTAS_COMPLETA.md) | Monitoramento de Validade e Alertas |
 | [TASK_2A_CRIPTOGRAFIA](docs/tasks/TASK_2A_CRIPTOGRAFIA_COMPLETA.md) | Criptografia de Dados PII |
 | [TASK_2B_LGPD](docs/tasks/TASK_2B_LGPD_COMPLETA.md) | Conformidade LGPD Lite |
-| [FASE1_CONCLUSAO.md](docs/conclusao/FASE1_CONCLUSAO.md) | Registro de conclusão da Fase 1 |
+| [TASK_3A_VALIDACOES_UX](docs/tasks/TASK_3A_VALIDACOES_UX.md) | Validações de Estoque e Melhorias de UX |
+| [CHANGELOG_21ABRIL](docs/tasks/CHANGELOG_21ABRIL.md) | Changelog de 21/04/2026 - Novas Funcionalidades |
+| [FASE1_CONCLUSAO.md](docs/conclusao/FASE1_CONCLUSAO.md) | Registro de conclusão da Fase 1 + Melhorias UX |
 | [CERTIFICATE.md](docs/conclusao/COMPLETION_CERTIFICATE.md) | Certificado de conclusão do MVP |
 
 ### 🧪 Testes & Qualidade

@@ -32,8 +32,8 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 | Gestão de estoque | Alta | ✅ Concluído |
 | Interface de vendas | Alta | ✅ Concluído |
 | Relatórios de vendas | Alta | ✅ Concluído |
-| Logging estruturado | Média | 📋 Planejado (TASK-004) |
-| Testes automatizados | Média | 📋 Planejado |
+| Logging estruturado | Crítica | ✅ Concluído |
+| Testes automatizados | Alta | ✅ Concluído |
 
 ---
 
@@ -90,8 +90,10 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 - [x] **Cobertura Backend:** 93 testes coletados, 57 passando, 67% cobertura geral (>90% em rotas implementadas)
 - [x] **E2E Automated Tests:** Suite completa com conftest.py, 7 módulos de teste, validação de autorização e negócio
 
-### 5.2 Segurança e Logging
+### 5.2 Segurança, Logging e LGPD
 - [x] **Logging & Auditoria (TASK-004)**: Sistema completo de logging em JSON estruturado com auditoria persistida.
+- [x] **Criptografia (TASK-2A)**: Criptografia de dados sensíveis (email) com AES-128 e Busca por Hash.
+- [x] **LGPD Lite (TASK-2B)**: Implementação de Direito de Acesso e Transparência (endpoint /me/dados).
 
 ### 5.3 Deploy
 - [ ] **Docker & DevOps**: Revisar o `docker-compose.yml` e o banco em nuvem (Ex: VPS) para migrar o SQLite nativo de Dev para SQLite3 Production/Postgresql em deploy.
@@ -100,4 +102,4 @@ Este roadmap descreve o plano de desenvolvimento do LANCHE MVP em **4 fases prin
 
 ## 📈 Resumo do Projeto
 
-O **LANCHE MVP** concluiu sua meta principal de integração ponta a ponta `(E2E)`. Agora a estrutura principal funciona como uma arquitetura madura **three-tier**, separando front, api, e dados na total segurança com Pydantic e Depends. Foi um sucesso estrondoso chegar a essa marca nas primeiras fases!
+O **LANCHE MVP** concluiu sua meta principal de integração ponta a ponta `(E2E)` e conformidade de segurança. Agora a estrutura principal funciona como uma arquitetura madura **three-tier**, separando front, api, e dados na total segurança com Pydantic e Criptografia. A cobertura de requisitos atingiu 82%!

@@ -42,6 +42,7 @@ Guia centralizado para navegação e referência rápida de toda a documentaçã
 | [TASK_1B_REPOSICAO](docs/tasks/TASK_1B_REPOSICAO_COMPLETA.md) | Reposição Automática de Estoque |
 | [TASK_1C_ALERTAS](docs/tasks/TASK_1C_ALERTAS_COMPLETA.md) | Monitoramento de Validade e Alertas |
 | [TASK_2A_CRIPTOGRAFIA](docs/tasks/TASK_2A_CRIPTOGRAFIA_COMPLETA.md) | Criptografia de Dados PII |
+| [TASK_2B_LGPD](docs/tasks/TASK_2B_LGPD_COMPLETA.md) | Conformidade LGPD Lite |
 | [FASE1_CONCLUSAO.md](docs/conclusao/FASE1_CONCLUSAO.md) | Registro de conclusão da Fase 1 |
 | [CERTIFICATE.md](docs/conclusao/COMPLETION_CERTIFICATE.md) | Certificado de conclusão do MVP |
 

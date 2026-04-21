@@ -8,11 +8,11 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import require_admin
+from app.api.deps import require_admin, get_current_active_user
 from app.core.security import hash_password
 from app.db.database import get_db
 from app.models.usuario import Usuario
-from app.schemas.usuario import UsuarioCreate, UsuarioResponse, UsuarioUpdate
+from app.schemas.usuario import UsuarioCreate, UsuarioResponse, UsuarioUpdate, UsuarioDadosExport
 
 router = APIRouter()
 
@@ -217,3 +217,37 @@ async def deletar_usuario(
 
     db.delete(usuario)
     db.commit()
+
+
+@router.get("/me/dados", response_model=UsuarioDadosExport)
+async def obter_meus_dados_lgpd(
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[UsuarioResponse, Depends(get_current_active_user)],
+):
+    """
+    Endpoint para transparência LGPD (Direito de Acesso).
+    Permite que qualquer usuário autenticado exporte seus próprios dados básicos.
+    """
+    from datetime import datetime
+    from app.models.auditoria import AuditoriaLog
+    
+    # Perfil básico
+    perfil = current_user
+    
+    # Atividades recentes (logs de auditoria vinculados ao user_id)
+    # Limitamos aos 50 mais recentes por performance e clareza
+    atividades = (
+        db.query(AuditoriaLog)
+        .filter(AuditoriaLog.user_id == current_user.id)
+        .order_by(AuditoriaLog.data_criacao.desc())
+        .limit(50)
+        .all()
+    )
+    
+    return {
+        "perfil": perfil,
+        "atividades_recentes": atividades,
+        "total_atividades": len(atividades),
+        "data_geracao": datetime.now()
+    }
+

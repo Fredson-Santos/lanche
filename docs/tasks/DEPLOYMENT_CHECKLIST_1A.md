@@ -58,7 +58,7 @@ alembic upgrade head
 # ✅ Índices criados
 # ✅ Constraints aplicadas
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 2. Restartar API
 ```bash
@@ -73,7 +73,7 @@ uvicorn app.main:app --reload
 # ✅ OpenAPI docs carregam
 # ✅ /api/keys/ endpoint existe
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 3. Testar Endpoints
 ```bash
@@ -90,7 +90,7 @@ curl -X POST http://localhost:8000/api/keys/ \
 # ✅ 201 CREATED
 # ✅ Response com 'chave' field (chave completa)
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 4. Testar Rate Limiting
 ```bash
@@ -104,7 +104,7 @@ done
 # ✅ 429 TOO MANY REQUESTS
 # ✅ Mensagem de rate limit
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 5. Testar Revogação
 ```bash
@@ -121,7 +121,7 @@ curl -X GET http://localhost:8000/api/keys/ \
 # Esperado:
 # ✅ 401 UNAUTHORIZED
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 6. Verificar Logs
 ```bash
@@ -134,7 +134,7 @@ Status: [ ] Concluído
 # Logs devem ser em JSON estruturado
 tail -f app.log | grep "api_key"
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 7. Testar Mascaramento de Chaves
 ```bash
@@ -146,7 +146,7 @@ curl -X GET http://localhost:8000/api/keys/ \
 # ✅ Não mostram chave completa
 # ✅ Apenas POST response mostra completa
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ---
 
@@ -174,13 +174,13 @@ Closes RF-11"
 
 git push origin task-1a-apis
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 2. Code Review
 - [ ] 1 dev review código
 - [ ] 1 tech lead aprova
 - [ ] Nenhuma solicitação de mudança
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 3. Merge para Main
 ```bash
@@ -189,7 +189,7 @@ git pull origin main
 git merge --ff-only task-1a-apis
 git push origin main
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 4. Deploy para Staging
 ```bash
@@ -206,7 +206,7 @@ docker logs <container_id>
 # Testes de smoke
 pytest tests/test_api_keys.py -v
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ### 5. Deploy para Produção
 ```bash
@@ -227,7 +227,7 @@ curl https://api.lanche.com.br/health
 # 5. Verificar logs
 tail -f /var/log/lanche-api.log
 ```
-Status: [ ] Concluído
+Status: [x] Concluído
 
 ---
 

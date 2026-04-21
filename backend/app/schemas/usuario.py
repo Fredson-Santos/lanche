@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -39,3 +39,16 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str
     usuario: UsuarioResponse
+
+
+from app.schemas.auditoria import AuditoriaLogResponse
+
+class UsuarioDadosExport(BaseModel):
+    """Schema para exportação de dados do usuário (Direito de Acesso LGPD)"""
+    perfil: UsuarioResponse
+    atividades_recentes: list[AuditoriaLogResponse]
+    total_atividades: int
+    data_geracao: datetime
+
+    class Config:
+        from_attributes = True

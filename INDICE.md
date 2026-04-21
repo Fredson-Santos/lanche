@@ -6,184 +6,76 @@ Guia centralizado para navegação e referência rápida de toda a documentaçã
 
 ## 🎯 Comece Por Aqui
 
-1. **Novo no projeto?** → [SETUP.md](SETUP.md)
-2. **Quer entender a arquitetura?** → [docs/ARQUITETURA.md](docs/ARQUITETURA.md)
-3. **Qual é o plano?** → [ROADMAP.md](ROADMAP.md)
-4. **Como está a estrutura?** → [ESTRUTURA_CRIADA.md](ESTRUTURA_CRIADA.md)
+1. **Quer entender a arquitetura?** → [docs/arquitetura/ARQUITETURA.md](docs/arquitetura/ARQUITETURA.md)
+2. **Qual é o plano?** → [ROADMAP.md](ROADMAP.md)
+3. **Visão Geral** → [README.md](README.md)
 
 ---
 
 ## 📚 Documentação por Categoria
 
-### 🚀 Início Rápido & Setup
-
-| Documento | Descrição | Para Quem |
-|-----------|-----------|----------|
-| [README.md](README.md) | Visão geral do projeto | Todos |
-| [SETUP.md](SETUP.md) | Guia passo-a-passo de setup | Desenvolvedores |
-| [ESTRUTURA_CRIADA.md](ESTRUTURA_CRIADA.md) | Estrutura e checklist | Desenvolvedores |
-
-### 📋 Planejamento & Roadmap
-
-| Documento | Descrição | Para Quem |
-|-----------|-----------|----------|
-| [ROADMAP.md](ROADMAP.md) | Timeline completa do projeto (4 fases) | Product Owner, Dev Lead |
-| [docs/README_MVP.md](docs/README_MVP.md) | Requisitos funcionais e não-funcionais | Analista, QA |
-| [docs/LANCHE MVP.md](docs/LANCHE%20MVP.md) | Especificação técnica detalhada | Todos |
-
 ### 🏗️ Arquitetura & Design
+| Documento | Descrição |
+|-----------|-----------|
+| [ARQUITETURA.md](docs/arquitetura/ARQUITETURA.md) | Arquitetura three-tier, fluxos, modelagem |
+| [ENCRYPTION_SETUP.md](docs/arquitetura/ENCRYPTION_SETUP.md) | Guia de configuração de criptografia de banco |
+| [Diagrama de Classes](docs/arquitetura/diagramas/01_DIAGRAMA_CLASSES_MVP.puml) | Modelagem de classes UML |
+| [Casos de Uso](docs/arquitetura/diagramas/02_DIAGRAMA_CASOS_USO_MVP.puml) | Diagrama de casos de uso |
 
-| Documento | Descrição | Para Quem |
-|-----------|-----------|----------|
-| [docs/ARQUITETURA.md](docs/ARQUITETURA.md) | Arquitetura three-tier, fluxos, modelagem | Arquiteto, Dev |
-| [docs/diagramas/01_DIAGRAMA_CLASSES_MVP.puml](docs/diagramas/01_DIAGRAMA_CLASSES_MVP.puml) | Diagrama de Classes UML | Arquiteto, Senior Dev |
-| [docs/diagramas/02_DIAGRAMA_CASOS_USO_MVP.puml](docs/diagramas/02_DIAGRAMA_CASOS_USO_MVP.puml) | Casos de Uso do MVP | Analista, PO |
-| [docs/diagramas/03_DIAGRAMA_SEQUENCIA_MVP.puml](docs/diagramas/03_DIAGRAMA_SEQUENCIA_MVP.puml) | Fluxos de Sequência | Dev |
-| [docs/diagramas/04_DIAGRAMA_ESTADOS_MVP.puml](docs/diagramas/04_DIAGRAMA_ESTADOS_MVP.puml) | Estados da Autenticação | Dev Security |
-| [docs/diagramas/05_DIAGRAMA_MER_MVP.puml](docs/diagramas/05_DIAGRAMA_MER_MVP.puml) | Modelagem ER do Banco | DBA, Dev |
+### 📋 Requisitos & Negócio
+| Documento | Descrição |
+|-----------|-----------|
+| [REQUISITOS_MVP.md](docs/requisitos/REQUISITOS_MVP.md) | Especificação técnica, RF, RNF e RN (Unificado) |
+| [Cenário de Negócio](docs/atividades/Atividade-a-Realizar/Cenario.md) | Contexto e regras de negócio |
 
-### 🎓 Atividades & Cenários
+### 🚀 Planejamento & Roadmaps
+| Documento | Descrição |
+|-----------|-----------|
+| [ROADMAP.md](ROADMAP.md) | Timeline principal do projeto |
+| [ROADMAP_SPRINT_FINAL.md](docs/planejamento/ROADMAP_SPRINT_FINAL.md) | Planejamento da fase final de entrega |
+| [Plano Frontend](docs/planejamento/Frontend_Plano_Implementacao.md) | Plano de implementação da UI React |
 
-| Documento | Descrição | Para Quem |
-|-----------|-----------|----------|
-| [docs/Atividade-a-Realizar/Atividade prática integradora.txt](docs/Atividade-a-Realizar/Atividade%20prática%20integradora.txt) | Atividade integradora do projeto | Estudantes |
-| [docs/Atividade-a-Realizar/Cenario.md](docs/Atividade-a-Realizar/Cenario.md) | Cenário de negócio detalhado | Todos |
+### ✅ Tarefas & Conclusões
+| Documento | Descrição |
+|-----------|-----------|
+| [TASK_1A_APIS](docs/tasks/TASK_1A_APIS_COMPLETA.md) | API Keys e Rate Limiting |
+| [TASK_1B_REPOSICAO](docs/tasks/TASK_1B_REPOSICAO_COMPLETA.md) | Reposição Automática de Estoque |
+| [TASK_1C_ALERTAS](docs/tasks/TASK_1C_ALERTAS_COMPLETA.md) | Monitoramento de Validade e Alertas |
+| [TASK_2A_CRIPTOGRAFIA](docs/tasks/TASK_2A_CRIPTOGRAFIA_COMPLETA.md) | Criptografia de Dados PII |
+| [FASE1_CONCLUSAO.md](docs/conclusao/FASE1_CONCLUSAO.md) | Registro de conclusão da Fase 1 |
+| [CERTIFICATE.md](docs/conclusao/COMPLETION_CERTIFICATE.md) | Certificado de conclusão do MVP |
 
----
-
-## 🔍 Procurando Algo Específico?
-
-### Setup & Instalação
-- **Como instalar?** → [SETUP.md](SETUP.md)
-- **Estrutura de pastas?** → [ESTRUTURA_CRIADA.md](ESTRUTURA_CRIADA.md)
-- **Docker Compose?** → [SETUP.md](SETUP.md#opção-a-iniciando-com-docker-compose)
-- **Variáveis de ambiente?** → [.env.example](.env.example)
-
-### Desenvolvimento Backend
-- **Stack tecnológico?** → [docs/ARQUITETURA.md](docs/ARQUITETURA.md#stack-tecnológico)
-- **Estrutura do backend?** → [ESTRUTURA_CRIADA.md](ESTRUTURA_CRIADA.md#backend-estrutura)
-- **Models e schemas?** → [docs/ARQUITETURA.md](docs/ARQUITETURA.md#modelagem-de-dados)
-- **Autenticação?** → [docs/ARQUITETURA.md](docs/ARQUITETURA.md#fluxo-de-autenticação)
-- **Endpoints da API?** → [README.md](README.md#endpoints-principais)
-
-### Desenvolvimento Frontend
-- **Estrutura do frontend?** → [ESTRUTURA_CRIADA.md](ESTRUTURA_CRIADA.md#frontend-estrutura)
-- **Como rodar React?** → [SETUP.md](SETUP.md#frontend-react--vite)
-- **Componentes?** → [docs/ARQUITETURA.md](docs/ARQUITETURA.md#frontend-react--vite)
-
-### Requisitos & Especificações
-- **Funcionalidades do MVP?** → [docs/README_MVP.md](docs/README_MVP.md#-funcionalidades-incluídas)
-- **Requisitos funcionais (23 RFs)?** → [docs/README_MVP.md](docs/README_MVP.md#requisitos-funcionais-23-rfs)
-- **Requisitos não-funcionais (17 RNFs)?** → [docs/README_MVP.md](docs/README_MVP.md#requisitos-não-funcionais-17-rnfs)
-- **Regras de negócio (19 RNs)?** → [docs/README_MVP.md](docs/README_MVP.md#regras-de-negócio-19-rns)
-- **Matriz de acesso?** → [docs/README_MVP.md](docs/README_MVP.md#matriz-de-acesso)
-
-### Planejamento & Timeline
-- **Quando será entregue?** → [ROADMAP.md](ROADMAP.md#-timeline-resumida)
-- **Qual é a próxima fase?** → [ROADMAP.md](ROADMAP.md#-fase-1-setup--core-backend)
-- **Quais são os riscos?** → [ROADMAP.md](ROADMAP.md#⚠️-riscos-identificados)
-- **Como acompanhar progresso?** → [ROADMAP.md](ROADMAP.md#📈-métricas-de-progresso)
-
-### Segurança
-- **Como funciona autenticação?** → [docs/ARQUITETURA.md](docs/ARQUITETURA.md#fluxo-de-autenticação)
-- **Matriz de acesso (RBAC)?** → [docs/README_MVP.md](docs/README_MVP.md#matriz-de-acesso)
-- **Como senhas são protegidas?** → [docs/ARQUITETURA.md](docs/ARQUITETURA.md#segurança)
+### 🧪 Testes & Qualidade
+| Documento | Descrição |
+|-----------|-----------|
+| [TESTES_VALIDACAO.md](docs/testes/TESTES_VALIDACAO_FINAL.md) | Plano de testes e resultados finais |
+| [TEST_RESULTS_SUMMARY.md](docs/testes/TEST_RESULTS_SUMMARY.md) | Sumário executivo de testes |
+| [FINAL_TEST_OUTPUT.txt](docs/testes/FINAL_TEST_OUTPUT.txt) | Log detalhado da execução de testes |
 
 ---
 
-## 📊 Estrutura de Documentação
+## 📊 Estrutura de Pastas (Organizada)
 
 ```
 lanche/
-├── README.md                          ← Comece aqui!
-├── ROADMAP.md                         ← Timeline do projeto
-├── SETUP.md                           ← Como configurar
-├── ESTRUTURA_CRIADA.md               ← Checklist de estrutura
-├── INDICE.md                         ← Este arquivo
-├── .env.example                       ← Variáveis de ambiente
-├── docker-compose.yml                ← Orquestração
+├── README.md                      # Ponto de entrada
+├── ROADMAP.md                     # Timeline principal
+├── INDICE.md                      # Este guia
 │
-├── backend/
-│   ├── requirements.txt               ← Dependências Python
-│   ├── .env.example                   ← Backend env template
-│   └── Dockerfile                     ← Backend container
+├── docs/                          # Central de Documentação
+│   ├── arquitetura/               # Tech Stack e Design
+│   │   └── diagramas/             # Arquivos PlantUML
+│   ├── requisitos/                # RN, RF e RNF
+│   ├── planejamento/              # Roadmaps e planos de ação
+│   ├── tasks/                     # Histórico de entregas (TASK_*)
+│   ├── testes/                    # Logs e métricas de QA
+│   ├── conclusao/                 # Certificados e marcos
+│   └── atividades/                # Atividades acadêmicas/integradora
 │
-├── frontend/
-│   ├── package.json                   ← Dependências Node
-│   ├── .env.example                   ← Frontend env template
-│   └── Dockerfile                     ← Frontend container
-│
-└── docs/
-    ├── LANCHE MVP.md                  ← Especificação técnica
-    ├── README_MVP.md                  ← Requisitos (RF/RNF/RN)
-    ├── ARQUITETURA.md                 ← Arquitetura detalhada
-    ├── Atividade-a-Realizar/
-    │   ├── Atividade prática integradora.txt
-    │   └── Cenario.md
-    └── diagramas/
-        ├── 01_DIAGRAMA_CLASSES_MVP.puml
-        ├── 02_DIAGRAMA_CASOS_USO_MVP.puml
-        ├── 03_DIAGRAMA_SEQUENCIA_MVP.puml
-        ├── 04_DIAGRAMA_ESTADOS_MVP.puml
-        └── 05_DIAGRAMA_MER_MVP.puml
+├── backend/                       # API FastAPI
+└── frontend/                      # React Native / Vite
 ```
 
 ---
-
-## 🎯 Roadmap de Documentação
-
-### Fase 1 (Semana 1-2)
-- ✅ README.md
-- ✅ SETUP.md
-- ✅ ESTRUTURA_CRIADA.md
-- ✅ ARQUITETURA.md
-- ✅ ROADMAP.md
-- ✅ INDICE.md (este)
-
-### Fase 2 (Semana 2-3)
-- ⏳ API Documentation (Swagger)
-- ⏳ Guia de Contribuição
-- ⏳ Coding Standards
-
-### Fase 3 (Semana 3-5)
-- ⏳ API Reference (endpoints)
-- ⏳ Guia de Testes
-- ⏳ Troubleshooting
-
-### Fase 4 (Semana 5-7)
-- ⏳ Manual do Usuário (Frontend)
-- ⏳ FAQ
-- ⏳ Guia de Operação
-
----
-
-## 🚀 Próximos Passos
-
-1. **Leia** [SETUP.md](SETUP.md) para configurar o ambiente
-2. **Entenda** [docs/ARQUITETURA.md](docs/ARQUITETURA.md) para arquitetura
-3. **Consulte** [ROADMAP.md](ROADMAP.md) para timeline
-4. **Acompanhe** [ESTRUTURA_CRIADA.md](ESTRUTURA_CRIADA.md) para progresso
-
----
-
-## 💡 Dicas de Navegação
-
-- Use `Ctrl+K Ctrl+O` (VSCode) para abrir rápido qualquer arquivo
-- Use `Ctrl+Shift+F` para buscar em todos os documentos
-- Clone este repositório para ter tudo offline
-- Abra os arquivos `.puml` com extensões PlantUML para visualizar diagramas
-
----
-
-## 📞 Dúvidas?
-
-- **Setup:** Veja [SETUP.md](SETUP.md)
-- **Arquitetura:** Veja [docs/ARQUITETURA.md](docs/ARQUITETURA.md)
-- **Requisitos:** Veja [docs/README_MVP.md](docs/README_MVP.md)
-- **Timeline:** Veja [ROADMAP.md](ROADMAP.md)
-
----
-
-**Última atualização:** Abril 19, 2026  
-**Documentação:** v1.0  
-**Status:** ✅ Completa
+**Última atualização:** 21 de Abril de 2026  
+**Status:** ✅ Documentação Reorganizada

@@ -2,6 +2,7 @@
 Rotas de gerenciamento de usuários - CRUD de usuários (apenas admin)
 """
 
+import hashlib
 from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -36,8 +37,10 @@ async def criar_usuario(
     Raises:
         HTTPException: Se o email já estiver registrado
     """
-    # Verifica se o email já existe
-    db_usuario = db.query(Usuario).filter(Usuario.email == usuario_data.email).first()
+    # Verifica se o email já existe (usando email_hash)
+    # Email é um campo encriptado, então precisa comparar hashes
+    email_hash = hashlib.sha256(usuario_data.email.encode()).hexdigest()
+    db_usuario = db.query(Usuario).filter(Usuario.email_hash == email_hash).first()
     if db_usuario:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -146,10 +149,12 @@ async def atualizar_usuario(
 
     # Atualiza apenas os campos fornecidos
     if usuario_data.email is not None:
-        # Verifica se o email já está em uso
+        # Verifica se o email já está em uso (usando email_hash)
+        # Email é um campo encriptado, então precisa comparar hashes
+        email_hash = hashlib.sha256(usuario_data.email.encode()).hexdigest()
         db_usuario = (
             db.query(Usuario)
-            .filter(Usuario.email == usuario_data.email, Usuario.id != usuario_id)
+            .filter(Usuario.email_hash == email_hash, Usuario.id != usuario_id)
             .first()
         )
         if db_usuario:
@@ -158,6 +163,7 @@ async def atualizar_usuario(
                 detail="Email já registrado",
             )
         usuario.email = usuario_data.email
+        usuario.email_hash = email_hash  # Atualiza o hash também
 
     if usuario_data.username is not None:
         # Verifica se o username já está em uso

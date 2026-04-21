@@ -5,6 +5,7 @@ Cria apenas o usuário admin na primeira execução
 
 from sqlalchemy.orm import Session
 
+import hashlib
 from app.core.security import hash_password
 from app.models.usuario import Usuario
 
@@ -22,8 +23,10 @@ def init_db(db: Session) -> None:
         return  # Banco já inicializado
 
     # Cria usuário admin padrão
+    admin_email = "admin@admin.com"
     admin_user = Usuario(
-        email="admin@admin.com",
+        email=admin_email,
+        email_hash=hashlib.sha256(admin_email.encode()).hexdigest(),
         username="admin",
         senha_hash=hash_password("Admin123"),
         role="admin",

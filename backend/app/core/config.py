@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     """Algoritmo para assinatura de tokens JWT"""
 
+    ENCRYPTION_KEY: str | None = None
+    """Chave de criptografia para campos sensíveis. Se None, gera uma aleatória (não recomendado para produção)"""
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     """Tempo de expiração do token de acesso em minutos (padrão: 24 horas)"""
 

@@ -2,6 +2,7 @@
 Rotas de autenticação - Login e gerenciamento de tokens JWT
 """
 
+import hashlib
 from datetime import timedelta
 from typing import Annotated
 
@@ -36,8 +37,10 @@ async def login(
     Raises:
         HTTPException: Se email ou senha forem inválidos
     """
-    # Busca o usuário pelo email
-    usuario = db.query(Usuario).filter(Usuario.email == login_data.email).first()
+    # Busca o usuário pelo email_hash (SHA-256 do email)
+    # Necessário porque email é um campo encriptado no banco de dados
+    email_hash = hashlib.sha256(login_data.email.encode()).hexdigest()
+    usuario = db.query(Usuario).filter(Usuario.email_hash == email_hash).first()
 
     # Valida se o usuário existe e a senha está correta
     if not usuario or not verify_password(login_data.senha, usuario.senha_hash):

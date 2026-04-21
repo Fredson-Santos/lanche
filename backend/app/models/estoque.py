@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, CheckConstraint, Float
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from app.db.database import Base
 
 
@@ -23,7 +23,7 @@ class Estoque(Base):
         onupdate=func.now()
     )
 
-    produto = relationship("Produto", backref="estoque")
+    produto = relationship("Produto", backref=backref("estoque", cascade="all, delete-orphan", uselist=False))
 
     __table_args__ = (
         CheckConstraint("quantidade >= 0", name="ck_estoque_quantidade_nao_negativa"),

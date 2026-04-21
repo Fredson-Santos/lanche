@@ -1,155 +1,82 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Virtual environments
-.venv/
+# Dependency Directories
+node_modules/
+frontend/node_modules/
 venv/
+.venv/
 env/
-ENV/
-env.bak/
-venv.bak/
+dist/
+frontend/dist/
+build/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-*.code-workspace
-
-# Environment variables
+# Environment Variables
 .env
 .env.local
 .env.*.local
-
-# Logs
-*.log
-logs/
-*.log.*
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-lanche.db
-
-# Frontend
-frontend/node_modules/
-frontend/dist/
+backend/.env
 frontend/.env
 frontend/.env.local
-frontend/yarn.lock
-
-# Backend
-backend/.env
 backend/.env.local
-backend/venv/
-backend/*.db
 
-# Docker
-.dockerignore
-
-# OS
+# Local Development / OS
 .DS_Store
 Thumbs.db
-
-# Temporary files
-*.tmp
-*.bak
 *.swp
 *.swo
 *~
+.cache/
 
-# Testing
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+.pylintrc
+.dmypy.json
+dmypy.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+backend/lanche.db
+lanche.db
+
+# Testing & Coverage
 .pytest_cache/
 .coverage
 htmlcov/
 .tox/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# IDE pycache
-.pylintrc
 .mypy_cache/
-.dmypy.json
 
-# Alembic
-alembic/versions/__pycache__/
+# Python / Bytecode
+__pycache__/
+backend/**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+*.egg
 
-# Project-specific
+# Vite / Frontend Specific
+.vite/
+.vitepress/
+
+# Project Specific / Documentation
+docs/Atividade-a-Realizar/
+*implementation_plan.md.resolved
+*resolved
+*Frontend LANCHE MVP — Plano de Implementação.md
+
+# Secrets & Credentials
 *.pem
 *.key
 *.crt
 secrets/
 .credentials/
-
-# Node
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# Misc
-*.zip
-*.tar.gz
-.cache/
-dmypy.json
-
-# Node modules (if applicable)
-node_modules/
-npm-debug.log
-
-# OS specific
-Thumbs.db
-.DS_Store
-
-# React/Vite
-dist/
-.vite/
-.vitepress/
-*.local
-
-# FastAPI/Uvicorn
-__pycache__/
-*.pyc
-.fastapi.db
-
-# Project specific
-docs/Atividade-a-Realizar/
-
-# Database files
-*.db
-*.sqlite3
-*.sqlite
-
-# OS files
-.DS_Store
-Thumbs.db
-
-*implementation_plan.md.resolved
-*Frontend LANCHE MVP — Plano de Implementação.md

@@ -107,8 +107,18 @@ docker-compose up --build
 
 # Acesse:
 # - Frontend: http://localhost:5173
-# - Backend: http://localhost:8000
-# - Swagger API: http://localhost:8000/docs
+# - Backend: http://localhost:8008
+# - Swagger API: http://localhost:8008/docs
+
+### 🌐 Acesso em Rede Local
+O sistema está configurado para ser acessado por outros dispositivos (celulares, tablets) na mesma rede Wi-Fi:
+1. Descubra o IP do seu computador (ex: `192.168.1.5`).
+2. Acesse `http://192.168.1.5:5173` no outro dispositivo.
+3. A comunicação com o backend funcionará automaticamente através da detecção dinâmica de IP.
+
+### ⚙️ Configuração Adicional
+- **Frontend Port/URL**: Pode ser ajustada no arquivo `frontend/.env`.
+- **Backend Port**: Configurada no `docker-compose.yml` e `backend/app/main.py`.
 ```
 
 ### Opção 2: Desenvolvimento Local

@@ -229,6 +229,34 @@ class TestProdutosDelete:
         response = client.get(f"/api/produtos/{produto_id}")
         assert response.status_code == 404
 
+    def test_deletar_produto_com_vinculos(self, client: TestClient, gerente_token, produto_data, test_db):
+        """Testa que não é possível excluir produto com histórico de vendas"""
+        from app.models.venda import Venda
+        from app.models.item_venda import ItemVenda
+        from app.models.usuario import Usuario
+        
+        headers = {"Authorization": f"Bearer {gerente_token}"}
+        
+        # 1. Cria produto
+        resp_prod = client.post("/api/produtos/", json=produto_data, headers=headers)
+        produto_id = resp_prod.json()["id"]
+        
+        # 2. Cria uma venda vinculada (usando models diretamente para simplificar o setup)
+        usuario = test_db.query(Usuario).first()
+        nova_venda = Venda(usuario_id=usuario.id, total=25.5)
+        test_db.add(nova_venda)
+        test_db.commit()
+        
+        item = ItemVenda(venda_id=nova_venda.id, produto_id=produto_id, quantidade=1, preco_unitario=25.5)
+        test_db.add(item)
+        test_db.commit()
+        
+        # 3. Tenta deletar o produto via API
+        response = client.delete(f"/api/produtos/{produto_id}", headers=headers)
+        
+        assert response.status_code == 409
+        assert "vendas" in response.json()["detail"].lower()
+
     def test_deletar_produto_com_caixa(self, client: TestClient, caixa_token, gerente_token, produto_data):
         """Testa que caixa não consegue deletar produto"""
         headers_gerente = {"Authorization": f"Bearer {gerente_token}"}

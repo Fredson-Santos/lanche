@@ -6,6 +6,7 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from app.api.deps import require_gerente
 from app.db.database import get_db
@@ -171,5 +172,12 @@ async def deletar_produto(
             detail="Produto não encontrado",
         )
 
-    db.delete(produto)
-    db.commit()
+    try:
+        db.delete(produto)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Não é possível excluir o produto pois ele possui registros de vendas ou estoque vinculados."
+        )

@@ -118,7 +118,10 @@ export function ProdutosPage() {
       await productService.remove(row.id)
       toast.success('Produto excluído!')
       await load()
-    } catch { toast.error('Erro', 'Não foi possível excluir.') }
+    } catch (err) {
+      const msg = err.response?.data?.detail || 'Não foi possível excluir o produto.'
+      toast.error('Erro ao excluir', msg)
+    }
   }
 
   const columns = [

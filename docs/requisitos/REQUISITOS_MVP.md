@@ -39,8 +39,8 @@ Os requisitos funcionais descrevem as ações que o sistema deve ser capaz de re
 | **RF-06** | Reposição Automática | Gerar ordens de reposição quando o estoque atinge o nível mínimo de segurança. | Alta | ✅ |
 | **RF-07** | Painel de Relatórios | Consolidar vendas e fluxo de caixa de todas as filiais em um painel gerencial único. | Alta | ✅ |
 | **RF-08** | Auditoria e Logs | Manter registro detalhado e imutável de todas as transações para fins de auditoria. | Alta | ✅ |
-| **RF-09** | Modo de Contingência Offline | Permitir processamento de vendas mesmo em caso de queda de conexão. | Média | 📋 |
-| **RF-10** | Sincronização Pós-Offline | Sincronizar dados automaticamente assim que a conexão for restabelecida. | Média | 📋 |
+| **RF-09** | Modo de Contingência Offline | Permitir processamento de vendas mesmo em caso de queda de conexão. | Média | � |
+| **RF-10** | Sincronização Pós-Offline | Sincronizar dados automaticamente assim que a conexão for restabelecida. | Média | 🚀 |
 | **RF-11** | Gestão de Dados (LGPD) | Funcionalidades de transparência e consulta básica de dados (Direito de Acesso) para funcionários. | Crítica | ✅ |
 | **RF-12** | Integração via API Aberta | Disponibilizar APIs modulares para integração com apps de logística e delivery. | Alta | ✅ |
 
@@ -91,6 +91,23 @@ Os requisitos abaixo foram identificados no cenário original, mas removidos do 
 |:---|:---|:---|:---:|
 | **RF-EXT-01** | Sincronização Bidirecional | Sincronizar inventário entre unidades e centro de distribuição em tempo real. | Alta |
 | **RF-EXT-02** | Autenticação Multifator (MFA) | Exigir autenticação extra ou biométrica para estorno e abertura de gaveta. | Crítica |
+
+---
+
+## 8. Status de Cobertura (21/04/2026)
+
+### Requisitos Cobertos: 9/11 (82%)
+- ✅ RF-01 a RF-03: Alertas e Validade (TASK 1C)
+- ✅ RF-04, RF-05: Vendas e Cupons (Base)
+- ✅ RF-06: Reposição Automática (TASK 1B)
+- ✅ RF-07, RF-08: Relatórios e Logs (Base + TASK 2A/2B)
+- 🚀 RF-09, RF-10: Modo Offline (TASK 3A - Em Progresso)
+- ✅ RF-11: LGPD (TASK 2B)
+- ✅ RF-12: APIs Abertas (TASK 1A)
+
+### Requisitos Não Cobertos: 2/11 (18%)
+- ❌ RF-EXT-01: Multi-Filial (Removido do escopo)
+- ❌ RF-EXT-02: MFA/Biometria (Removido do escopo)
 
 ---
 **Documento Revisado para Atividade Integradora**  

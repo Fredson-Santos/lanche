@@ -3,10 +3,15 @@ import { useAuth } from '../context/AuthContext'
 import { Card, CardHeader } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Spinner } from '../components/ui/Spinner'
+import { Modal } from '../components/ui/Modal'
 import { toast } from '../hooks/useToast'
 import { productService } from '../services/productService'
 import { salesService } from '../services/salesService'
 import { stockService } from '../services/stockService'
+import { useCashier } from '../hooks/useCashier'
+import { useOffline } from '../hooks/useOffline'
+import { PasswordModal } from '../components/Sales/PasswordModal'
+import { OfflineStatusBanner } from '../components/layout/OfflineStatusBanner'
 
 const fmtBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 const fmtDate = (iso) => new Date(iso).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })
@@ -20,6 +25,8 @@ const getEmoji = (nome) => PRODUCT_EMOJI[nome] ?? '🍽️'
 
 export function VendasPage() {
   const { user } = useAuth()
+  const { isOpen, openCashier, closeCashier, downloadJournal } = useCashier()
+  const { logSale, updateSyncStatus, isOnline, downloadJournal: downloadJournalOffline, clearAllSales } = useOffline()
 
   const [tab, setTab]             = useState('nova') // nova | historico
   const [products, setProducts]   = useState([])
@@ -30,6 +37,12 @@ export function VendasPage() {
   const [finishing, setFinishing] = useState(false)
   const [history, setHistory]     = useState([])
   const [histLoading, setHistLoading] = useState(false)
+  
+  // UI for Opening/Closing
+  const [showOpenModal, setShowOpenModal]   = useState(false)
+  const [showCloseModal, setShowCloseModal] = useState(false)
+  const [showDownloadAfterClose, setShowDownloadAfterClose] = useState(false)
+  const [authLoading, setAuthLoading]       = useState(false)
 
   const loadProducts = useCallback(async () => {
     try {
@@ -68,6 +81,20 @@ export function VendasPage() {
   )
 
   const addToCart = (produto) => {
+    const estoque = stockInfo[produto.id] || 0
+    const emCarrinho = cart.find(i => i.produto_id === produto.id)?.quantidade || 0
+    
+    // Bloquear adição se sem estoque ou não há espaço
+    if (estoque === 0) {
+      toast.error('Sem Estoque', `${produto.nome} não está disponível.`)
+      return
+    }
+    
+    if (emCarrinho >= estoque) {
+      toast.warning('Estoque Insuficiente', `Você já tem ${emCarrinho} ${produto.nome} no carrinho. Estoque disponível: ${estoque}`)
+      return
+    }
+
     setCart(prev => {
       const found = prev.find(i => i.produto_id === produto.id)
       if (found) {
@@ -87,6 +114,18 @@ export function VendasPage() {
   }
 
   const updateQty = (produto_id, delta) => {
+    const item = cart.find(i => i.produto_id === produto_id)
+    if (!item) return
+
+    const novaQtd = item.quantidade + delta
+    const estoque = stockInfo[produto_id] || 0
+
+    // Se está tentando aumentar além do estoque
+    if (delta > 0 && novaQtd > estoque) {
+      toast.warning('Estoque Insuficiente', `Estoque disponível: ${estoque}. Você já tem ${item.quantidade} no carrinho.`)
+      return
+    }
+
     setCart(prev => prev
       .map(i => i.produto_id === produto_id
         ? { ...i, quantidade: i.quantidade + delta, subtotal: (i.quantidade + delta) * i.preco_unitario }
@@ -103,32 +142,140 @@ export function VendasPage() {
   const handleFinalize = async () => {
     if (cart.length === 0) { toast.error('Carrinho vazio', 'Adicione ao menos um produto.'); return }
     setFinishing(true)
+    
+    // Preparar dados para backend e log local
+    const payload = {
+      usuario_id: user.id,
+      itens: cart.map(i => ({ 
+        produto_id: i.produto_id, 
+        quantidade: i.quantidade,
+        preco_unitario: i.preco_unitario
+      }))
+    }
+
+    // 1. REGISTRO LOCAL (AUDITORIA/REDUNDÂNCIA)
+    // Mesmo com internet, salvamos localmente primeiro
+    let localId = null;
     try {
-      const venda = await salesService.create(cart, user.id, user.username)
-      toast.success('Venda finalizada!', `Total: ${fmtBRL(venda.data.total)}`)
+      localId = await logSale(payload, 'pendente');
+    } catch (e) {
+      console.error('Erro ao gravar log local:', e);
+    }
+
+    try {
+      // 2. ENVIO AO SERVIDOR
+      const response = await salesService.create(cart, user.id, user.username)
+      
+      // 3. ATUALIZAR STATUS NO LOG LOCAL
+      if (localId) {
+        await updateSyncStatus(localId, response.data.id, 'sincronizado');
+        console.log('Venda criada e marcada como sincronizada:', { localId, serverId: response.data.id });
+      }
+
+      toast.success('Venda finalizada!', `Total: ${fmtBRL(response.data.total)}`)
       clearCart()
       await loadProducts() // refresh stock info
-    } catch { toast.error('Erro', 'Não foi possível finalizar a venda.') }
-    finally { setFinishing(false) }
+    } catch (err) {
+      // Se for erro de rede, o item já está no Log Local como "pendente"
+      if (!err.response) {
+        toast.warning('Modo Offline', 'Sem conexão com servidor. Venda salva para sincronização futura.');
+        clearCart();
+        // Otimisticamente tratamos como sucesso no UI do caixa
+      } else {
+        // Se há erro do servidor, ainda manter no log local como pendente
+        console.error('Erro ao finalizar venda:', err.response?.data?.detail || err.message);
+        toast.error('Erro', err.response?.data?.detail || 'Não foi possível finalizar a venda.');
+      }
+    } finally {
+      setFinishing(false)
+    }
   }
+
+  const handleOpenConfirm = async (password) => {
+    setAuthLoading(true)
+    const success = await openCashier(password)
+    if (success) setShowOpenModal(false)
+    setAuthLoading(false)
+  }
+
+  const handleCloseConfirm = async (password) => {
+    setAuthLoading(true)
+    const success = await closeCashier(password)
+    if (success) {
+      setShowCloseModal(false)
+      setShowDownloadAfterClose(true)
+    }
+    setAuthLoading(false)
+  }
+
+  const handleDownloadAndClear = async () => {
+    await downloadJournalOffline()
+    await clearAllSales()
+    setShowDownloadAfterClose(false)
+    toast.success('Concluído', 'Arquivo baixado e dados apagados com sucesso.')
+  }
+
+  const handleClearOnly = async () => {
+    await clearAllSales()
+    setShowDownloadAfterClose(false)
+    toast.success('Concluído', 'Dados apagados com sucesso.')
+  }
+
+
 
   return (
     <div className="animate-fade-in">
-      <div className="page-header">
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 className="page-title">Vendas</h1>
           <p className="page-subtitle">Interface de caixa e histórico de vendas</p>
         </div>
+        <div>
+          {isOpen ? (
+            <Button variant="danger" size="sm" onClick={() => setShowCloseModal(true)}>
+              🔓 Fechar Caixa
+            </Button>
+          ) : (
+            <Button variant="success" size="sm" onClick={() => setShowOpenModal(true)}>
+              🔒 Abrir Caixa
+            </Button>
+          )}
+        </div>
       </div>
-
-      {/* Tabs */}
-      <div className="tabs">
-        <button id="tab-nova-venda"  className={`tab-btn ${tab === 'nova'      ? 'active' : ''}`} onClick={() => setTab('nova')}>🛒 Nova Venda</button>
-        <button id="tab-historico"   className={`tab-btn ${tab === 'historico' ? 'active' : ''}`} onClick={() => setTab('historico')}>📋 Histórico</button>
-      </div>
-
+      
       {tab === 'nova' && (
-        <div className="vendas-layout">
+        <div className="vendas-layout-wrapper">
+          {/* Overlay bloqueador quando caixa fechado - cobre tudo */}
+          {!isOpen && (
+            <div className="cashier-lock-overlay-full">
+              <div className="cashier-lock-content">
+                <div className="cashier-lock-icon">🔒</div>
+                <p className="cashier-lock-text">Caixa Fechado</p>
+                <p className="cashier-lock-subtitle">Abra o caixa com sua senha para iniciar vendas</p>
+                <Button 
+                  variant="primary" 
+                  size="lg"
+                  onClick={() => setShowOpenModal(true)}
+                  className="cashier-lock-button"
+                >
+                  🔓 Abrir Caixa
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {isOpen && (
+            <>
+              <OfflineStatusBanner />
+
+              {/* Tabs */}
+              <div className="tabs">
+                <button id="tab-nova-venda"  className={`tab-btn ${tab === 'nova'      ? 'active' : ''}`} onClick={() => setTab('nova')}>🛒 Nova Venda</button>
+                <button id="tab-historico"   className={`tab-btn ${tab === 'historico' ? 'active' : ''}`} onClick={() => setTab('historico')}>📋 Histórico</button>
+              </div>
+
+              <div className="vendas-layout">
+
           {/* Products Grid */}
           <div>
             <div style={{ marginBottom: '16px' }}>
@@ -138,6 +285,7 @@ export function VendasPage() {
                   id="venda-search"
                   className="form-input"
                   placeholder="Buscar produto..."
+                  disabled={!isOpen}
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   style={{ paddingLeft: '40px' }}
@@ -156,9 +304,9 @@ export function VendasPage() {
                     <div
                       id={`produto-card-${p.id}`}
                       key={p.id}
-                      className={`product-card-sale ${isOutOfStock ? 'out-of-stock' : ''}`}
-                      onClick={() => addToCart(p)}
-                      style={isOutOfStock ? { border: '1px solid var(--color-danger)' } : {}}
+                      className={`product-card-sale ${isOutOfStock || !isOpen ? 'out-of-stock' : ''}`}
+                      onClick={() => !isOutOfStock && isOpen && addToCart(p)}
+                      style={isOutOfStock ? { border: '1px solid var(--color-danger)', cursor: 'not-allowed', opacity: 0.6 } : { cursor: 'pointer' }}
                     >
                       <div className="product-emoji">{getEmoji(p.nome)}</div>
                       <div className="product-name">{p.nome}</div>
@@ -185,7 +333,7 @@ export function VendasPage() {
             {cart.length === 0 ? (
               <div className="cart-empty">
                 <div className="cart-empty-icon">🛒</div>
-                <div>Clique em um produto para adicionar</div>
+                <div>{isOpen ? 'Clique em um produto para adicionar' : 'Abra o caixa para iniciar'}</div>
               </div>
             ) : (
               <div className="cart-items">
@@ -225,12 +373,15 @@ export function VendasPage() {
                 className="w-full"
                 onClick={handleFinalize}
                 loading={finishing}
-                disabled={cart.length === 0}
+                disabled={cart.length === 0 || !isOpen}
               >
                 ✅ Finalizar Venda
               </Button>
             </div>
+            </div>
           </div>
+            </>
+          )}
         </div>
       )}
 
@@ -272,6 +423,41 @@ export function VendasPage() {
           )}
         </Card>
       )}
+      <PasswordModal 
+        isOpen={showOpenModal}
+        title="Abertura de Caixa"
+        onConfirm={handleOpenConfirm} 
+        onCancel={() => setShowOpenModal(false)}
+        loading={authLoading}
+      />
+
+      <PasswordModal 
+        isOpen={showCloseModal}
+        title="Fechamento de Caixa"
+        onConfirm={handleCloseConfirm}
+        onCancel={() => setShowCloseModal(false)}
+        loading={authLoading}
+      />
+
+      <Modal
+        open={showDownloadAfterClose}
+        onClose={() => setShowDownloadAfterClose(false)}
+        title="Finalizar Turno"
+        icon="✅"
+        size="md"
+        footer={
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <Button variant="secondary" onClick={handleClearOnly}>
+              Não, apenas apagar
+            </Button>
+            <Button variant="primary" onClick={handleDownloadAndClear}>
+              Sim, baixar e apagar
+            </Button>
+          </div>
+        }
+      >
+        <p>Turno encerrado com sucesso! Deseja baixar o arquivo de auditoria (.json) antes de apagar os dados locais?</p>
+      </Modal>
     </div>
   )
 }

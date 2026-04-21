@@ -39,6 +39,7 @@ async def criar_produto(
         descricao=produto_data.descricao,
         preco=produto_data.preco,
         categoria=produto_data.categoria,
+        data_validade=produto_data.data_validade,
     )
     db.add(novo_produto)
     db.commit()
@@ -137,6 +138,8 @@ async def atualizar_produto(
         produto.preco = produto_data.preco
     if produto_data.categoria is not None:
         produto.categoria = produto_data.categoria
+    if produto_data.data_validade is not None:
+        produto.data_validade = produto_data.data_validade
 
     db.commit()
     db.refresh(produto)

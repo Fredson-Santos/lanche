@@ -16,6 +16,15 @@ const LEVELS = (q) => {
   return         { label: 'Normal',            variant: 'success', level: 'high',   pct: 66 + Math.min(((q - 30) / 70) * 34, 34) }
 }
 
+const fmtDate = (iso) => {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const dd = String(d.getDate()).padStart(2, '0')
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const yyyy = d.getFullYear()
+  return `${dd}/${mm}/${yyyy}`
+}
+
 export function EstoquePage() {
   const { hasRole } = useAuth()
   const canEdit = hasRole('admin', 'gerente')
@@ -69,6 +78,12 @@ export function EstoquePage() {
   const columns = [
     { key: 'nome',       label: 'Produto',     render: v => <span style={{ fontWeight: 500 }}>{v}</span> },
     { key: 'quantidade', label: 'Qtd.',         render: v => <span style={{ fontWeight: 700 }}>{v}</span>, width: 80 },
+    { key: 'data_validade', label: 'Validade', render: (_, r) => {
+      const v = r.produto?.data_validade
+      if (!v) return <span style={{ color: 'var(--color-text-muted)' }}>-</span>
+      const isExpired = new Date(v) < new Date()
+      return <span style={{ color: isExpired ? 'var(--color-danger)' : 'inherit', fontWeight: isExpired ? 600 : 400 }}>{fmtDate(v)}</span>
+    }, width: 110 },
     { key: 'temperatura_atual', label: 'Temp.', render: v => v != null ? <span style={{ color: v > 10 ? 'var(--color-danger)' : 'inherit', fontWeight: 500 }}>{v} °C</span> : <span style={{ color: 'var(--color-text-muted)' }}>-</span>, width: 80 },
     { key: 'status',     label: 'Status',       render: (v, r) => {
       const lvl = LEVELS(r.quantidade)

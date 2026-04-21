@@ -20,7 +20,15 @@ const fmtDateTime = (iso) => {
   const mm = String(d.getMonth() + 1).padStart(2, '0')
   return `${hh}:${min}:${ss} ${dd}/${mm}`
 }
-const EMPTY_FORM = { nome: '', descricao: '', preco: '' }
+const fmtDate = (iso) => {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const dd = String(d.getDate()).padStart(2, '0')
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const yyyy = d.getFullYear()
+  return `${dd}/${mm}/${yyyy}`
+}
+const EMPTY_FORM = { nome: '', descricao: '', preco: '', data_validade: '' }
 
 export function ProdutosPage() {
   const { hasRole } = useAuth()
@@ -57,7 +65,15 @@ export function ProdutosPage() {
   }, [products, search, filterAux])
 
   const openCreate = () => setModal({ open: true, mode: 'create', data: EMPTY_FORM })
-  const openEdit   = (row) => setModal({ open: true, mode: 'edit', data: { ...row, preco: String(row.preco) } })
+  const openEdit   = (row) => setModal({
+    open: true,
+    mode: 'edit',
+    data: {
+      ...row,
+      preco: String(row.preco),
+      data_validade: row.data_validade ? row.data_validade.split('T')[0] : ''
+    }
+  })
   const closeModal = () => setModal(m => ({ ...m, open: false }))
 
   const handleSave = async () => {
@@ -65,7 +81,13 @@ export function ProdutosPage() {
     if (!data.nome || !data.preco) { toast.error('Campos inválidos', 'Nome e preço são obrigatórios.'); return }
     setSaving(true)
     try {
-      const payload = { nome: data.nome, descricao: data.descricao, preco: parseFloat(data.preco) }
+      const payload = {
+        nome: data.nome,
+        descricao: data.descricao,
+        preco: parseFloat(data.preco),
+        categoria: data.categoria || 'outros',
+        data_validade: data.data_validade || null
+      }
       if (mode === 'create') {
         await productService.create(payload)
         toast.success('Produto criado!', `"${data.nome}" adicionado com sucesso.`)
@@ -107,6 +129,11 @@ export function ProdutosPage() {
       </div>
     )},
     { key: 'preco',    label: 'Preço',    render: v => <span style={{ fontWeight: 600, color: 'var(--color-success)' }}>{fmtBRL(v)}</span> },
+    { key: 'data_validade', label: 'Validade', render: v => {
+      if (!v) return <span style={{ color: 'var(--color-text-muted)' }}>N/A</span>
+      const isExpired = new Date(v) < new Date()
+      return <span style={{ color: isExpired ? 'var(--color-danger)' : 'inherit', fontWeight: isExpired ? 600 : 400 }}>{fmtDate(v)}</span>
+    }, width: 110 },
     { key: 'ativo',    label: 'Status',   render: v => <ActiveBadge value={v} />, width: 100 },
     { key: 'data_criacao', label: 'Criado', render: v => fmtDateTime(v), width: 120 },
   ]
@@ -209,6 +236,14 @@ export function ProdutosPage() {
           placeholder="0,00"
           value={modal.data?.preco ?? ''}
           onChange={e => setModal(m => ({ ...m, data: { ...m.data, preco: e.target.value } }))}
+        />
+        <Input
+          id="modal-produto-validade"
+          label="Data de Validade (Opcional)"
+          type="date"
+          value={modal.data?.data_validade ?? ''}
+          onChange={e => setModal(m => ({ ...m, data: { ...m.data, data_validade: e.target.value } }))}
+          helper="Para itens perecíveis."
         />
       </Modal>
     </div>

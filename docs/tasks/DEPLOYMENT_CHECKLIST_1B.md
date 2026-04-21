@@ -206,11 +206,11 @@ curl -X PUT "http://localhost:8000/api/reposicao/1/receber?quantidade_recebida=5
 1. Fazer login como gerente
 2. Navegar para menu "Reposição" (ícone 🔄)
 3. Verificar:
-   - [ ] Cards de resumo carregam
-   - [ ] Lista de ordens exibe
-   - [ ] Filtro funciona
-   - [ ] Botões de ação aparecem
-   - [ ] Ações executam com sucesso
+   - [x] Cards de resumo carregam
+   - [x] Lista de ordens exibe
+   - [x] Filtro funciona
+   - [x] Botões de ação aparecem
+   - [x] Ações executam com sucesso
 
 ---
 
@@ -218,15 +218,15 @@ curl -X PUT "http://localhost:8000/api/reposicao/1/receber?quantidade_recebida=5
 
 ### Checklist Final
 
-- [ ] Aplicação iniciou sem erros
-- [ ] Scheduler está rodando (verificar logs)
-- [ ] API retorna 200 OK para endpoints
-- [ ] RBAC bloqueia usuários não-gerentes
-- [ ] Frontend carrega página de reposição
-- [ ] Testes passam 100%
-- [ ] Git status clean (todas mudanças committed)
-- [ ] Documentação está completa
-- [ ] Nenhum erro em console/logs
+- [x] Aplicação iniciou sem erros
+- [x] Scheduler está rodando (verificar logs)
+- [x] API retorna 200 OK para endpoints
+- [x] RBAC bloqueia usuários não-gerentes
+- [x] Frontend carrega página de reposição
+- [x] Testes passam 100%
+- [x] Git status clean (todas mudanças committed)
+- [x] Documentação está completa
+- [x] Nenhum erro em console/logs
 
 ---
 

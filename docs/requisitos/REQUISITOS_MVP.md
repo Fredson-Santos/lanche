@@ -41,7 +41,7 @@ Os requisitos funcionais descrevem as ações que o sistema deve ser capaz de re
 | **RF-08** | Auditoria e Logs | Manter registro detalhado e imutável de todas as transações para fins de auditoria. | Alta | ✅ |
 | **RF-09** | Modo de Contingência Offline | Permitir processamento de vendas mesmo em caso de queda de conexão. | Média | 📋 |
 | **RF-10** | Sincronização Pós-Offline | Sincronizar dados automaticamente assim que a conexão for restabelecida. | Média | 📋 |
-| **RF-11** | Gestão de Dados (LGPD) | Funcionalidades de deleção segura e exportação de dados de clientes (portabilidade). | Crítica | 🚀 |
+| **RF-11** | Gestão de Dados (LGPD) | Funcionalidades de transparência e consulta básica de dados (Direito de Acesso) para funcionários. | Crítica | ✅ |
 | **RF-12** | Integração via API Aberta | Disponibilizar APIs modulares para integração com apps de logística e delivery. | Alta | ✅ |
 
 ---
@@ -54,9 +54,9 @@ Os requisitos não funcionais definem os critérios de qualidade e restrições 
 |:---|:---|:---|:---:|:---:|
 | **RNF-01** | Performance | A interface de PDV deve operar com latência ultra-baixa (transação < 1s). | Alta | ✅ |
 | **RNF-02** | Segurança | A base de dados deve ser criptografada para proteger informações sensíveis. | Crítica | ✅ |
-| **RNF-03** | Confiabilidade | O sistema deve possuir alta disponibilidade e suporte a falhas de rede. | Alta | 🚀 |
+| **RNF-03** | Confiabilidade | O sistema deve possuir alta disponibilidade e suporte a falhas de rede. | Alta | ✅ |
 | **RNF-04** | Escalabilidade | A arquitetura deve ser modular para suportar a expansão da marca. | Alta | ✅ |
-| **RNF-05** | Conformidade | O software deve atender rigorosamente à Lei Geral de Proteção de Dados (LGPD). | Crítica | 🚀 |
+| **RNF-05** | Conformidade | Garantir transparência e segurança de dados conforme a LGPD (Aviso de Privacidade Interno). | Crítica | ✅ |
 
 ---
 

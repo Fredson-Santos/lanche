@@ -12,6 +12,9 @@ Desenvolver um sistema simplificado e funcional para gestão de vendas em lojas 
 - ✅ Interface de caixa para vendas
 - ✅ Relatórios de vendas
 - ✅ Logging estruturado e auditoria
+- ✅ Controle de validade e temperatura
+- ✅ Gestão de dados pessoais (LGPD Lite)
+- ✅ Criptografia de dados PII
 
 ## 📊 Stack Tecnológico
 
@@ -150,18 +153,21 @@ npm run dev
 - [x] Interface de vendas
 - [x] Relatório de vendas
 - [x] Logging estruturado
-- [ ] Testes automatizados
-- [ ] Documentação Swagger
+- [x] Testes automatizados (Unitários e E2E)
+- [x] Documentação Swagger (OpenAPI)
+
+### Próximas Versões
+
+- [x] Controle de validade e Alertas (TASK 1C)
+- [x] Gestão de Dados/LGPD (TASK 2B)
 
 ### Próximas Versões
 
 - Recuperação de senha por email
 - Múltiplas filiais
-- Controle de validade
 - Múltiplas formas de pagamento
 - Cupom fiscal (CF-e)
-- Sincronização de dados
-- Modo offline
+- Modo offline (Sincronização)
 
 ## 🔐 Segurança
 
@@ -228,6 +234,11 @@ POST   /api/vendas            # Cria nova venda
 POST   /api/vendas/{id}/itens # Adiciona item à venda
 GET    /api/vendas            # Lista histórico de vendas
 GET    /api/vendas/{id}       # Obtém detalhes da venda
+
+#### LGPD & Segurança
+GET    /api/usuarios/me/dados # Exportar meus dados (Acesso)
+GET    /api/keys/             # Listar chaves API (Admin)
+POST   /api/keys/             # Gerar nova chave (Admin)
 ```
 
 #### Relatórios
@@ -265,7 +276,7 @@ Autenticação, autorização, CRUD de usuários/produtos/estoque, vendas, relat
 ### Regras de Negócio (19 RNs)
 Email único, senha criptografada, role obrigatório, estoque não negativo, venda imutável, etc.
 
-Consulte [docs/requisitos/REQUISITOS_MVP.md](docs/requisitos/REQUISITOS_MVP.md) para a lista completa.
+Consulte [docs/requisitos/REQUISITOS_MVP.md](docs/requisitos/REQUISITOS_MVP.md) para a lista completa. O projeto atingiu **82% de cobertura** dos requisitos funcionais planejados para o MVP.
 
 ## 🤝 Contribuindo
 

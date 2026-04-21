@@ -68,11 +68,6 @@ backend/**/__pycache__/
 .vite/
 .vitepress/
 
-# Project Specific / Documentation
-docs/Atividade-a-Realizar/
-*implementation_plan.md.resolved
-*resolved
-*Frontend LANCHE MVP — Plano de Implementação.md
 
 # Secrets & Credentials
 *.pem
@@ -80,3 +75,7 @@ docs/Atividade-a-Realizar/
 *.crt
 secrets/
 .credentials/
+
+# Scratch & Temporary
+*.txt
+backend/*.txt

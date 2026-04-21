@@ -29,6 +29,42 @@ FE -> FE: Armazena token no localStorage
 FE --> Op: ✓ Autenticado\nBem-vindo João!
 deactivate FE
 
+== Cadastro de Produto com Validade ==
+
+Op -> FE: Clica em "Novo Produto"
+activate FE
+Op -> FE: Preenche nome, preço e data_validade
+FE -> API: POST /api/produtos/\n{nome: "Leite", preco: 5.50, data_validade: "2026-12-31"}
+activate API
+API -> BD: INSERT produtos (data_validade='2026-12-31')
+activate BD
+BD --> API: produto_id = 10
+deactivate BD
+API -> BD: INSERT estoques (produto_id=10, quantidade=0)
+activate BD
+BD --> API: ok
+deactivate BD
+API --> FE: {id: 10, nome: "Leite", data_validade: "2026-12-31"}
+deactivate API
+FE --> Op: ✓ Produto cadastrado com validade
+deactivate FE
+
+== Monitoramento e Alertas ==
+
+note over API: O Scheduler executa periodicamente
+API -> BD: SELECT * FROM produtos\nWHERE data_validade <= NOW() + 7 dias
+activate BD
+BD --> API: [Produto(id=10, nome="Leite")]
+deactivate BD
+API -> BD: INSERT alertas (tipo="validade", titulo="Produto Vencendo")
+activate BD
+BD --> API: ok
+deactivate BD
+API -> FE: (WebSocket/Polling) Ativar Alerta
+activate FE
+FE -> Op: ⚠ Notificação: Leite vence em 31/12
+deactivate FE
+
 == Venda ==
 
 Op -> FE: 2. Clica em "Nova Venda"

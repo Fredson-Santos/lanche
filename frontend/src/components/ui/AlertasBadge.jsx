@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useApi } from '../../hooks/useApi'
+import { Badge } from './Badge'
+import { Button } from './Button'
+import { useNavigate } from 'react-router-dom'
 
 /**
  * Componente AlertasBadge - Mostra alertas de validade/temperatura no dashboard
@@ -7,15 +10,14 @@ import { useApi } from '../../hooks/useApi'
  */
 export function AlertasBadge() {
   const { request } = useApi()
+  const navigate = useNavigate()
   const [alertas, setAlertas] = useState([])
   const [showAlertas, setShowAlertas] = useState(false)
   const [resumo, setResumo] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Carrega alertas ao montar o componente
   useEffect(() => {
     carregarAlertas()
-    // Recarrega a cada 5 minutos
     const interval = setInterval(carregarAlertas, 5 * 60 * 1000)
     return () => clearInterval(interval)
   }, [])
@@ -23,22 +25,12 @@ export function AlertasBadge() {
   const carregarAlertas = async () => {
     try {
       setLoading(true)
-      
-      // Carrega resumo de alertas
-      const resResumo = await request('/api/alertas/dashboard/resumo', {
-        method: 'GET'
-      })
-      
+      const resResumo = await request('/api/alertas/dashboard/resumo', { method: 'GET' })
       if (resResumo.ok) {
-        const data = await resResumo.json()
-        setResumo(data)
+        setResumo(await resResumo.json())
       }
       
-      // Carrega lista de alertas
-      const resAlertas = await request('/api/alertas/?apenas_ativos=true', {
-        method: 'GET'
-      })
-      
+      const resAlertas = await request('/api/alertas/?apenas_ativos=true', { method: 'GET' })
       if (resAlertas.ok) {
         const data = await resAlertas.json()
         setAlertas(Array.isArray(data) ? data : [])
@@ -56,11 +48,8 @@ export function AlertasBadge() {
         method: 'PUT',
         body: JSON.stringify({ lido: true })
       })
-      
       if (res.ok) {
-        // Remove o alerta da lista
         setAlertas(alertas.filter(a => a.id !== alertaId))
-        // Recarrega resumo
         carregarAlertas()
       }
     } catch (error) {
@@ -68,121 +57,70 @@ export function AlertasBadge() {
     }
   }
 
-  const getTipoAlertaBadgeColor = (tipo) => {
+  const getTipoAlertaBadge = (tipo) => {
     switch (tipo) {
-      case 'validade':
-        return '#FF6B6B' // Vermelho
-      case 'temperatura':
-        return '#FF9F43' // Laranja
-      case 'estoque_minimo':
-        return '#FFD93D' // Amarelo
-      default:
-        return '#999'
+      case 'validade': return <Badge variant="danger" dot>Validade</Badge>
+      case 'temperatura': return <Badge variant="warning" dot>Temperatura</Badge>
+      case 'estoque_minimo': return <Badge variant="info" dot>Estoque Mínimo</Badge>
+      default: return <Badge variant="default">{tipo}</Badge>
     }
   }
 
-  const getTipoAlertaLabel = (tipo) => {
-    switch (tipo) {
-      case 'validade':
-        return 'Validade'
-      case 'temperatura':
-        return 'Temperatura'
-      case 'estoque_minimo':
-        return 'Estoque Mínimo'
-      default:
-        return tipo
-    }
-  }
-
-  // Se não há alertas, mostra apenas o ícone
-  if (!resumo || resumo.total_alertas === 0) {
-    return (
-      <div className="alertas-badge" title="Nenhum alerta ativo">
-        <span className="alertas-icon">🔔</span>
-      </div>
-    )
-  }
+  const hasAlerts = resumo && resumo.total_nao_lidos > 0
 
   return (
     <div className="alertas-badge-container" style={{ position: 'relative' }}>
       <button
         className="alertas-badge"
-        onClick={() => setShowAlertas(!showAlertas)}
-        title={`${resumo.total_alertas} alerta${resumo.total_alertas !== 1 ? 's' : ''} ativo${resumo.total_alertas !== 1 ? 's' : ''}`}
+        onClick={(e) => { e.stopPropagation(); setShowAlertas(!showAlertas); }}
+        title={hasAlerts ? `${resumo.total_nao_lidos} nova(s) notificação(ões)` : 'Nenhum alerta novo'}
       >
-        <span className="alertas-icon">⚠️</span>
-        <span className="alertas-count">{resumo.total_alertas}</span>
+        <span className="alertas-icon">{hasAlerts ? '⚠️' : '🔔'}</span>
+        {hasAlerts && <span className="alertas-count">{resumo.total_nao_lidos}</span>}
       </button>
 
-      {showAlertas && (
-        <div className="alertas-popover">
+      {showAlertas && hasAlerts && (
+        <div className="alertas-popover animate-fade-in" onClick={(e) => e.stopPropagation()}>
           <div className="alertas-header">
-            <h3>Alertas Ativos ({resumo.total_alertas})</h3>
-            <button
-              className="alertas-close"
-              onClick={() => setShowAlertas(false)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2em' }}
-            >
-              ✕
-            </button>
+            <h3 style={{ margin: 0, fontWeight: 600 }}>Alertas Ativos ({resumo.total_alertas})</h3>
+            <button className="alertas-close" onClick={() => setShowAlertas(false)}>✕</button>
           </div>
 
-          {/* Resumo por tipo */}
-          {resumo.alertas_por_tipo && Object.keys(resumo.alertas_por_tipo).length > 0 && (
-            <div className="alertas-resumo">
-              {Object.entries(resumo.alertas_por_tipo).map(([tipo, count]) => (
-                <div key={tipo} className="alertas-tipo-count">
-                  <span
-                    className="alertas-tipo-badge"
-                    style={{ backgroundColor: getTipoAlertaBadgeColor(tipo) }}
-                  >
-                    {getTipoAlertaLabel(tipo)}
-                  </span>
-                  <span className="alertas-tipo-number">{count}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Lista de alertas */}
           <div className="alertas-lista">
             {loading ? (
-              <p style={{ textAlign: 'center', color: '#999' }}>Carregando...</p>
+              <p style={{ textAlign: 'center', color: 'var(--color-text-muted)' }}>Buscando alertas...</p>
             ) : alertas.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#999' }}>Nenhum alerta</p>
+              <p style={{ textAlign: 'center', color: 'var(--color-text-muted)' }}>✅ Todos os alertas foram lidos.</p>
             ) : (
               alertas.slice(0, 5).map(alerta => (
                 <div key={alerta.id} className="alerta-item">
-                  <div className="alerta-titulo">
-                    <span
-                      className="alerta-tipo"
-                      style={{ backgroundColor: getTipoAlertaBadgeColor(alerta.tipo) }}
-                    >
-                      {getTipoAlertaLabel(alerta.tipo)}
-                    </span>
-                    <span className="alerta-texto">{alerta.titulo}</span>
+                  <div className="alerta-titulo" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    {getTipoAlertaBadge(alerta.tipo)}
+                    <span style={{ fontWeight: 500, flex: 1, fontSize: '0.9rem' }}>{alerta.titulo}</span>
                   </div>
                   {alerta.descricao && (
-                    <div className="alerta-descricao">{alerta.descricao}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '12px' }}>
+                      {alerta.descricao}
+                    </div>
                   )}
-                  <button
-                    className="alerta-marcar-lido"
-                    onClick={() => marcarComoLido(alerta.id)}
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={(e) => { e.stopPropagation(); marcarComoLido(alerta.id); }} 
+                    style={{ width: '100%', fontSize: '0.8rem' }}
                   >
                     Marcar como lido
-                  </button>
+                  </Button>
                 </div>
               ))
             )}
           </div>
 
-          {alertas.length > 5 && (
-            <div className="alertas-footer">
-              <a href="/alertas" style={{ textDecoration: 'none', color: '#0066CC' }}>
-                Ver todos os alertas ({alertas.length})
-              </a>
-            </div>
-          )}
+          <div className="alertas-footer">
+            <Button variant="primary" style={{ width: '100%' }} onClick={() => { setShowAlertas(false); navigate('/alertas') }}>
+              Ver todos os {alertas.length} alertas
+            </Button>
+          </div>
         </div>
       )}
 
@@ -197,15 +135,15 @@ export function AlertasBadge() {
           cursor: pointer;
           position: relative;
           padding: 8px 12px;
-          font-size: 1.2em;
           display: flex;
           align-items: center;
           gap: 4px;
           transition: transform 0.2s;
+          color: var(--color-text-primary);
         }
 
         .alertas-badge:hover {
-          transform: scale(1.1);
+          transform: scale(1.05);
         }
 
         .alertas-icon {
@@ -213,7 +151,7 @@ export function AlertasBadge() {
         }
 
         .alertas-count {
-          background: #FF6B6B;
+          background: var(--color-danger);
           color: white;
           border-radius: 50%;
           width: 20px;
@@ -221,148 +159,75 @@ export function AlertasBadge() {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 0.75em;
-          font-weight: bold;
+          font-size: 0.75rem;
+          font-weight: 700;
+          position: absolute;
+          top: 0;
+          right: 4px;
+          border: 2px solid var(--color-bg);
         }
 
         .alertas-popover {
           position: absolute;
           top: 100%;
           right: 0;
-          background: white;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          width: 350px;
+          background-color: var(--color-bg-card);
+          border: 1px solid var(--color-border);
+          border-radius: 12px;
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+          width: 360px;
           max-height: 500px;
           display: flex;
           flex-direction: column;
           z-index: 1000;
-          margin-top: 8px;
+          margin-top: 16px;
+          overflow: hidden;
         }
 
         .alertas-header {
-          padding: 12px 16px;
-          border-bottom: 1px solid #eee;
+          padding: 16px;
+          border-bottom: 1px solid var(--color-border);
           display: flex;
           justify-content: space-between;
           align-items: center;
-        }
-
-        .alertas-header h3 {
-          margin: 0;
-          font-size: 0.95em;
-          color: #333;
+          background: rgba(255, 255, 255, 0.03);
+          color: var(--color-text-primary);
         }
 
         .alertas-close {
-          color: #999;
-          font-size: 1.2em;
+          background: none;
+          border: none;
           cursor: pointer;
+          color: var(--color-text-muted);
+          font-size: 1.2rem;
+          padding: 4px;
         }
 
-        .alertas-resumo {
-          padding: 8px 16px;
-          border-bottom: 1px solid #eee;
-          display: flex;
-          gap: 8px;
-          flex-wrap: wrap;
-        }
-
-        .alertas-tipo-count {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          font-size: 0.85em;
-        }
-
-        .alertas-tipo-badge {
-          padding: 2px 8px;
-          border-radius: 4px;
-          color: white;
-          font-size: 0.75em;
-          font-weight: bold;
-        }
-
-        .alertas-tipo-number {
-          background: #f0f0f0;
-          padding: 2px 6px;
-          border-radius: 3px;
-          font-weight: bold;
-          color: #333;
+        .alertas-close:hover {
+          color: var(--color-text-primary);
         }
 
         .alertas-lista {
           flex: 1;
           overflow-y: auto;
-          padding: 8px;
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          color: var(--color-text-primary);
         }
 
         .alerta-item {
-          padding: 12px;
-          border-bottom: 1px solid #eee;
-          border-radius: 4px;
-          background: #f9f9f9;
-          margin-bottom: 8px;
-          font-size: 0.9em;
-        }
-
-        .alerta-item:last-child {
-          margin-bottom: 0;
-          border-bottom: none;
-        }
-
-        .alerta-titulo {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 8px;
-        }
-
-        .alerta-tipo {
-          padding: 3px 8px;
-          border-radius: 3px;
-          color: white;
-          font-size: 0.75em;
-          font-weight: bold;
-          white-space: nowrap;
-        }
-
-        .alerta-texto {
-          font-weight: 500;
-          color: #333;
-          flex: 1;
-        }
-
-        .alerta-descricao {
-          color: #666;
-          font-size: 0.85em;
-          margin-bottom: 8px;
-          line-height: 1.4;
-        }
-
-        .alerta-marcar-lido {
-          background: none;
-          border: 1px solid #ddd;
-          color: #0066CC;
-          padding: 4px 8px;
-          border-radius: 3px;
-          cursor: pointer;
-          font-size: 0.8em;
-          transition: all 0.2s;
-        }
-
-        .alerta-marcar-lido:hover {
-          background: #0066CC;
-          color: white;
-          border-color: #0066CC;
+          padding: 16px;
+          border: 1px solid var(--color-border);
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.02);
         }
 
         .alertas-footer {
-          padding: 12px 16px;
-          border-top: 1px solid #eee;
-          text-align: center;
-          font-size: 0.9em;
+          padding: 16px;
+          border-top: 1px solid var(--color-border);
+          background: rgba(0, 0, 0, 0.2);
         }
       `}</style>
     </div>

@@ -9,7 +9,7 @@ export const stockService = {
     return api.get(`/api/estoque/produto/${produto_id}`)
   },
 
-  async update(id, quantidade) {
-    return api.put(`/api/estoque/${id}`, { quantidade })
+  async update(id, quantidade, temperatura_atual = null) {
+    return api.put(`/api/estoque/${id}`, { quantidade, temperatura_atual })
   },
 }

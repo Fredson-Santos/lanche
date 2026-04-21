@@ -31,7 +31,7 @@ from app.utils.reposicao import (
     obter_ordens_pendentes,
     obter_ordens_recebidas_recentemente,
 )
-from app.core.logging import audit_logger
+from app.core.logging import audit_logger as logger
 
 router = APIRouter()
 

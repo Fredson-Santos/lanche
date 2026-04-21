@@ -24,7 +24,7 @@ export function EstoquePage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [saving, setSaving] = useState(false)
-  const [modal, setModal]   = useState({ open: false, item: null, qty: '' })
+  const [modal, setModal]   = useState({ open: false, item: null, qty: '', temp: '' })
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -43,15 +43,22 @@ export function EstoquePage() {
     !search || s.nome.toLowerCase().includes(search.toLowerCase())
   )
 
-  const openEdit = (item) => setModal({ open: true, item, qty: String(item.quantidade) })
+  const openEdit = (item) => setModal({ open: true, item, qty: String(item.quantidade), temp: item.temperatura_atual !== null ? String(item.temperatura_atual) : '' })
   const closeModal = () => setModal(m => ({ ...m, open: false }))
 
   const handleSave = async () => {
     const qty = parseInt(modal.qty, 10)
     if (isNaN(qty) || qty < 0) { toast.error('Quantidade inválida', 'Digite um número ≥ 0.'); return }
+    
+    let t = null;
+    if (modal.temp.trim() !== '') {
+      t = parseFloat(modal.temp.replace(',', '.'));
+      if (isNaN(t)) { toast.error('Temperatura inválida', 'Digite um número válido.'); return }
+    }
+
     setSaving(true)
     try {
-      await stockService.update(modal.item.id, qty)
+      await stockService.update(modal.item.produto_id, qty, t)
       toast.success('Estoque atualizado!', `${modal.item.nome}: ${qty} unid.`)
       await load()
       closeModal()
@@ -62,6 +69,7 @@ export function EstoquePage() {
   const columns = [
     { key: 'nome',       label: 'Produto',     render: v => <span style={{ fontWeight: 500 }}>{v}</span> },
     { key: 'quantidade', label: 'Qtd.',         render: v => <span style={{ fontWeight: 700 }}>{v}</span>, width: 80 },
+    { key: 'temperatura_atual', label: 'Temp.', render: v => v != null ? <span style={{ color: v > 10 ? 'var(--color-danger)' : 'inherit', fontWeight: 500 }}>{v} °C</span> : <span style={{ color: 'var(--color-text-muted)' }}>-</span>, width: 80 },
     { key: 'status',     label: 'Status',       render: (v, r) => {
       const lvl = LEVELS(r.quantidade)
       return (
@@ -137,6 +145,17 @@ export function EstoquePage() {
           onChange={e => setModal(m => ({ ...m, qty: e.target.value }))}
           helper="Digite a quantidade atual real em estoque."
         />
+        <div style={{ marginTop: '16px' }}>
+          <Input
+            id="modal-estoque-temp"
+            label="Temperatura Atual (°C)"
+            type="number"
+            step="0.1"
+            value={modal.temp}
+            onChange={e => setModal(m => ({ ...m, temp: e.target.value }))}
+            helper="Deixe em branco se não inspecionado."
+          />
+        </div>
       </Modal>
     </div>
   )

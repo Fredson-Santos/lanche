@@ -9,10 +9,11 @@ export function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
 
-  const [email, setEmail]     = useState('')
-  const [senha, setSenha]     = useState('')
+  const [email, setEmail] = useState('')
+  const [senha, setSenha] = useState('')
+  const [showSenha, setShowSenha] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -67,11 +68,21 @@ export function LoginPage() {
           <Input
             id="login-senha"
             label="Senha"
-            type="password"
+            type={showSenha ? 'text' : 'password'}
             placeholder="••••••••"
             value={senha}
             onChange={e => setSenha(e.target.value)}
             icon="🔒"
+            suffix={
+              <button 
+                type="button" 
+                onClick={() => setShowSenha(!showSenha)}
+                title={showSenha ? "Esconder senha" : "Ver senha"}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
+              >
+                {showSenha ? '👁️‍G️' : '👁️'}
+              </button>
+            }
           />
 
           {error && (

@@ -1,18 +1,36 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: lanche-db
+    restart: always
+    environment:
+      POSTGRES_USER: lanche_user
+      POSTGRES_PASSWORD: lanche_pass
+      POSTGRES_DB: lanche_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - lanche-network
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: lanche-backend
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8008 --reload
+    command: /bin/bash scripts/start.sh
     ports:
       - "8008:8008"
     environment:
+      DATABASE_URL: postgresql://lanche_user:lanche_pass@db:5432/lanche_db
       SECRET_KEY: dev-secret-key-change-in-prod
     volumes:
       - ./backend:/app
     networks:
       - lanche-network
+    depends_on:
+      - db
 
   frontend:
     build:
@@ -33,3 +51,7 @@ services:
 networks:
   lanche-network:
     driver: bridge
+
+volumes:
+  postgres_data:
+

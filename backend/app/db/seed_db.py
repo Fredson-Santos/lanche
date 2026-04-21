@@ -22,81 +22,40 @@ from datetime import datetime, timedelta
 import random
 import uuid
 import secrets
+import hashlib
 
 
 def criar_usuarios(db: Session):
     """Cria usuários padrão e de teste"""
     print("📝 Criando usuários...")
-    
-    usuarios = [
+    usuarios_data = [
         # Administradores
-        Usuario(
-            email="admin@lanche.com",
-            username="admin",
-            senha_hash=hash_password("admin123"),
-            role="admin",
-            ativo=True,
-        ),
-        Usuario(
-            email="admin2@lanche.com",
-            username="admin_backup",
-            senha_hash=hash_password("admin456"),
-            role="admin",
-            ativo=True,
-        ),
+        {"email": "admin@lanche.com", "username": "admin", "senha": "admin123", "role": "admin", "ativo": True},
+        {"email": "admin2@lanche.com", "username": "admin_backup", "senha": "admin456", "role": "admin", "ativo": True},
         # Gerentes
-        Usuario(
-            email="gerente@lanche.com",
-            username="gerente",
-            senha_hash=hash_password("gerente123"),
-            role="gerente",
-            ativo=True,
-        ),
-        Usuario(
-            email="gerente2@lanche.com",
-            username="gerente_noite",
-            senha_hash=hash_password("gerente456"),
-            role="gerente",
-            ativo=True,
-        ),
+        {"email": "gerente@lanche.com", "username": "gerente", "senha": "gerente123", "role": "gerente", "ativo": True},
+        {"email": "gerente2@lanche.com", "username": "gerente_noite", "senha": "gerente456", "role": "gerente", "ativo": True},
         # Caixas (operadores de ponto de venda)
-        Usuario(
-            email="caixa@lanche.com",
-            username="caixa",
-            senha_hash=hash_password("caixa123"),
-            role="caixa",
-            ativo=True,
-        ),
-        Usuario(
-            email="caixa2@lanche.com",
-            username="caixa2",
-            senha_hash=hash_password("caixa456"),
-            role="caixa",
-            ativo=True,
-        ),
-        Usuario(
-            email="caixa3@lanche.com",
-            username="caixa3",
-            senha_hash=hash_password("caixa789"),
-            role="caixa",
-            ativo=True,
-        ),
-        Usuario(
-            email="caixa_noite@lanche.com",
-            username="caixa_turno_noite",
-            senha_hash=hash_password("noite123"),
-            role="caixa",
-            ativo=True,
-        ),
+        {"email": "caixa@lanche.com", "username": "caixa", "senha": "caixa123", "role": "caixa", "ativo": True},
+        {"email": "caixa2@lanche.com", "username": "caixa2", "senha": "caixa456", "role": "caixa", "ativo": True},
+        {"email": "caixa3@lanche.com", "username": "caixa3", "senha": "caixa789", "role": "caixa", "ativo": True},
+        {"email": "caixa_noite@lanche.com", "username": "caixa_turno_noite", "senha": "noite123", "role": "caixa", "ativo": True},
         # Usuário inativo para teste
-        Usuario(
-            email="inativo@lanche.com",
-            username="usuario_inativo",
-            senha_hash=hash_password("inativo123"),
-            role="caixa",
-            ativo=False,
-        ),
+        {"email": "inativo@lanche.com", "username": "usuario_inativo", "senha": "inativo123", "role": "caixa", "ativo": False},
     ]
+    
+    usuarios = []
+    for data in usuarios_data:
+        usuarios.append(
+            Usuario(
+                email=data["email"],
+                email_hash=hashlib.sha256(data["email"].encode()).hexdigest(),
+                username=data["username"],
+                senha_hash=hash_password(data["senha"]),
+                role=data["role"],
+                ativo=data["ativo"],
+            )
+        )
     
     for usuario in usuarios:
         db.add(usuario)

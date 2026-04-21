@@ -10,11 +10,14 @@ DATABASE_URL = os.getenv(
     "sqlite:///./lanche.db"
 )
 
-# Criar engine com configurações apropriadas para SQLite e PostgreSQL
+# Criar engine com configurações apropriadas
+connect_args = {"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
+
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {},
+    connect_args=connect_args,
     echo=False,
+    pool_pre_ping=True,  # Recomendado para Postgres para evitar erros de conexão perdida
 )
 
 # Criar factory de sessão

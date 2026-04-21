@@ -1,60 +1,90 @@
-@startuml LANCHE MVP - Modelo Entidade-Relacionamento
-
-!define pk(name) <b>PK</b> name
-!define fk(name) <i>FK</i> name
-!define not_null <u>NN</u>
+@startuml
+title LANCHE MVP - Modelo Entidade-Relacionamento
 
 entity "usuarios" as usuarios {
-  * pk(id): INT
+  * id : INT <<PK>>
   --
-  * email: VARCHAR(100) <u>NN</u> [UNIQUE]
-  * senha_hash: VARCHAR(255) <u>NN</u>
-  * nome: VARCHAR(100) <u>NN</u>
-  * role: VARCHAR(20) <u>NN</u> [admin/gerente/caixa]
-  * ativo: BOOLEAN <u>NN</u> [DEFAULT: true]
-  * criado_em: TIMESTAMP [DEFAULT: NOW()]
-  * atualizado_em: TIMESTAMP
-  * ultimo_acesso: TIMESTAMP
+  * email : VARCHAR(100) <<NN>> UNIQUE
+  * senha_hash : VARCHAR(255) <<NN>>
+  * nome : VARCHAR(100) <<NN>>
+  * role : VARCHAR(20) <<NN>>
+  * ativo : BOOLEAN <<NN>>
+  * criado_em : TIMESTAMP
+  * atualizado_em : TIMESTAMP
+  * ultimo_acesso : TIMESTAMP
 }
 
 entity "produtos" as produtos {
-  * pk(id): INT
+  * id : INT <<PK>>
   --
-  * nome: VARCHAR(100) <u>NN</u> [UNIQUE]
-  * descricao: TEXT
-  * preco: DECIMAL(10,2) <u>NN</u> [> 0]
-  * sku: VARCHAR(50) [UNIQUE]
-  * ativo: BOOLEAN [DEFAULT: true]
-  * criado_em: TIMESTAMP [DEFAULT: NOW()]
-  * atualizado_em: TIMESTAMP
+  * nome : VARCHAR(100) <<NN>> UNIQUE
+  * descricao : TEXT
+  * preco : DECIMAL(10,2) <<NN>>
+  * categoria : VARCHAR(100) <<NN>>
+  * data_validade : DATE
+  * lote : VARCHAR(100)
+  * temperatura_ideal_min : DECIMAL(5,2)
+  * temperatura_ideal_max : DECIMAL(5,2)
+  * ativo : BOOLEAN
+  * criado_em : TIMESTAMP
+  * atualizado_em : TIMESTAMP
 }
 
 entity "estoque" as estoque {
-  * pk(id): INT
+  * id : INT <<PK>>
   --
-  * fk(produto_id): INT <u>NN</u> [UNIQUE]
-  * quantidade: INT <u>NN</u> [DEFAULT: 0]
-  * atualizado_em: TIMESTAMP [DEFAULT: NOW()]
+  * produto_id : INT <<FK>> <<NN>>
+  * quantidade : INT <<NN>>
+  * estoque_minimo : INT <<NN>>
+  * estoque_maximo : INT <<NN>>
+  * ponto_reposicao : INT <<NN>>
+  * temperatura_atual : DECIMAL(5,2)
+  * data_ultima_verificacao : TIMESTAMP
+  * atualizado_em : TIMESTAMP
 }
 
 entity "vendas" as vendas {
-  * pk(id): INT
+  * id : INT <<PK>>
   --
-  * fk(usuario_id): INT <u>NN</u>
-  * data_hora: TIMESTAMP <u>NN</u> [DEFAULT: NOW()]
-  * subtotal: DECIMAL(10,2) <u>NN</u>
-  * total: DECIMAL(10,2) <u>NN</u>
-  * status: VARCHAR(20) <u>NN</u> [aberta/finalizada/cancelada]
+  * usuario_id : INT <<FK>> <<NN>>
+  * data_hora : TIMESTAMP <<NN>>
+  * subtotal : DECIMAL(10,2) <<NN>>
+  * total : DECIMAL(10,2) <<NN>>
+  * status : VARCHAR(20) <<NN>>
 }
 
 entity "itens_venda" as itens_venda {
-  * pk(id): INT
+  * id : INT <<PK>>
   --
-  * fk(venda_id): INT <u>NN</u>
-  * fk(produto_id): INT <u>NN</u>
-  * quantidade: INT <u>NN</u>
-  * preco_unitario: DECIMAL(10,2) <u>NN</u>
-  * subtotal: DECIMAL(10,2) <u>NN</u>
+  * venda_id : INT <<FK>> <<NN>>
+  * produto_id : INT <<FK>> <<NN>>
+  * quantidade : INT <<NN>>
+  * preco_unitario : DECIMAL(10,2) <<NN>>
+  * subtotal : DECIMAL(10,2) <<NN>>
+}
+
+entity "alertas" as alertas {
+  * id : INT <<PK>>
+  --
+  * tipo : VARCHAR(50) <<NN>>
+  * produto_id : INT <<FK>>
+  * estoque_id : INT <<FK>>
+  * titulo : VARCHAR(255) <<NN>>
+  * descricao : TEXT
+  * lido : BOOLEAN
+  * ativo : BOOLEAN
+  * criado_em : TIMESTAMP
+}
+
+entity "ordens_reposicao" as ordens_reposicao {
+  * id : INT <<PK>>
+  --
+  * estoque_id : INT <<FK>> <<NN>>
+  * produto_id : INT <<FK>> <<NN>>
+  * quantidade_solicitada : INT <<NN>>
+  * quantidade_recebida : INT
+  * status : VARCHAR(50) <<NN>>
+  * data_criacao : TIMESTAMP
 }
 
 ' Relacionamentos
@@ -62,25 +92,25 @@ usuarios ||--o{ vendas
 produtos ||--|| estoque
 produtos ||--o{ itens_venda
 vendas ||--o{ itens_venda
+estoque ||--o{ ordens_reposicao
+produtos ||--o{ ordens_reposicao
+produtos ||--o{ alertas
+estoque ||--o{ alertas
 
 note bottom of produtos
   Catálogo único de produtos
-  Nome e preço obrigatórios
 end note
 
 note bottom of estoque
   Uma linha por produto
-  Quantidade sincronizada
 end note
 
 note bottom of vendas
   Histórico imutável
-  Status: aberta/finalizada/cancelada
 end note
 
 note bottom of itens_venda
   Detalhe da venda
-  Preço capturado no momento
 end note
 
 @enduml

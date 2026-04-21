@@ -23,7 +23,11 @@ class Produto {
   -nome: string (100)
   -descricao: text
   -preco: decimal
-  -sku: string (50)
+  -categoria: string (100)
+  -data_validade: timestamp
+  -lote: string (100)
+  -temperatura_ideal_min: decimal
+  -temperatura_ideal_max: decimal
   -ativo: boolean
   -criado_em: timestamp
   -atualizado_em: timestamp
@@ -36,6 +40,11 @@ class Estoque {
   -id: int (PK)
   -produto_id: int (FK)
   -quantidade: int
+  -estoque_minimo: int
+  -estoque_maximo: int
+  -ponto_reposicao: int
+  -temperatura_atual: decimal
+  -data_ultima_verificacao: timestamp
   -atualizado_em: timestamp
   --
   +adicionarQuantidade(qtd)
@@ -69,9 +78,13 @@ class ItemVenda {
 }
 
 Usuario "1" -- "*" Venda : realiza
-Produto "1" -- "*" Estoque : tem
+Produto "1" -- "1" Estoque : tem
 Produto "1" -- "*" ItemVenda : vendido em
 Venda "1" -- "*" ItemVenda : contém
+Estoque "1" -- "*" OrdemReposicao : gera
+Produto "1" -- "*" OrdemReposicao : refere-se a
+Produto "1" -- "*" Alerta : gera
+Estoque "1" -- "*" Alerta : monitorado por
 
 note right of Usuario
   Usuários do sistema
@@ -100,5 +113,25 @@ note right of ItemVenda
   Detalhe do item
   na venda
 end note
+
+class Alerta {
+  -id: int (PK)
+  -tipo: string (validade|temperatura|estoque)
+  -titulo: string
+  -descricao: text
+  -lido: boolean
+  -ativo: boolean
+  -criado_em: timestamp
+}
+
+class OrdemReposicao {
+  -id: int (PK)
+  -estoque_id: int (FK)
+  -produto_id: int (FK)
+  -quantidade_solicitada: int
+  -quantidade_recebida: int
+  -status: string
+  -data_criacao: timestamp
+}
 
 @enduml

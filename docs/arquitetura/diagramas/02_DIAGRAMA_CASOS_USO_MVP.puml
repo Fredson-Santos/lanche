@@ -24,6 +24,9 @@ package "Gestão de Produtos" {
 package "Controle de Estoque" {
   usecase UC_CONSULTAR as "Consultar Estoque"
   usecase UC_ATUALIZAR as "Atualizar Quantidade"
+  usecase UC_VALIDADE as "Monitorar Validade"
+  usecase UC_TEMP as "Monitorar Temperatura"
+  usecase UC_REPOSICAO as "Gerar Ordem\nde Reposição"
 }
 
 package "Venda" {
@@ -65,6 +68,9 @@ UC_LOGIN -.-> UC_LOGOUT : <<extend>>
 Gerente --> UC_CADASTRAR
 Gerente --> UC_EDITAR
 Gerente --> UC_ATUALIZAR
+Gerente --> UC_VALIDADE
+Gerente --> UC_TEMP
+Gerente --> UC_REPOSICAO
 Gerente --> UC_FILTRAR
 Gerente --> UC_TOTAL
 

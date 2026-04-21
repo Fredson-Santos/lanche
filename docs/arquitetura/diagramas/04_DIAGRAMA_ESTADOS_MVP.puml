@@ -32,6 +32,17 @@ state Autenticado {
   
   VendaFinalizada --> Dashboard: venda_processada()
   VendaAberta --> Dashboard: cancelar_venda()
+
+  state CicloDeVidaDoProduto {
+    [*] --> Novo
+    Novo --> EmEstoque: carregar_estoque()
+    EmEstoque --> BaixoEstoque: quantidade < ponto_reposicao
+    BaixoEstoque --> EmEstoque: reposicao_recebida()
+    EmEstoque --> AlertaVencimento: data_atual >= validade - 7 dias
+    AlertaVencimento --> Vencido: data_atual >= validade
+    Vencido --> [*]: descartar_produto()
+    EmEstoque --> [*]: produto_deletado()
+  }
 }
 
 Autenticado --> [*]: sessao_expirada()

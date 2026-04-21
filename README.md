@@ -164,18 +164,21 @@ npm run dev
 - [x] Testes automatizados (Unitários e E2E)
 - [x] Documentação Swagger (OpenAPI)
 
-### Próximas Versões
+### MVP v1.1 - Funcionalidades Avançadas (21/04/2026)
 
 - [x] Controle de validade e Alertas (TASK 1C)
 - [x] Gestão de Dados/LGPD (TASK 2B)
-
-### Próximas Versões
-
-- Recuperação de senha por email
-- Múltiplas filiais
-- Múltiplas formas de pagamento
-- Cupom fiscal (CF-e)
-- Modo offline (Sincronização)
+- [x] Criptografia de Banco de Dados (TASK 2A)
+- [x] APIs Abertas para Terceiros (TASK 1A)
+- [x] Reposição Automática de Estoque (TASK 1B)
+- [x] Validações de Estoque no Carrinho (TASK 3A-UX)
+- [x] Modo Offline - Journaling Offline (Iniciado TASK 3A)
+  - [x] IndexedDB com Dexie
+  - [x] Sync manual com backend
+  - [x] Limpeza de dados após decisão
+  - [x] Download de auditoria
+  - [ ] Service Worker (próximo)
+  - [ ] Cache API (próximo)
 
 ## 🔐 Segurança
 

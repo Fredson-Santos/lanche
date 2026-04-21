@@ -13,6 +13,7 @@ import { UsuariosPage }  from './pages/UsuariosPage'
 import { ReposicaoPage } from './pages/ReposicaoPage'
 import { AlertasPage } from './pages/AlertasPage'
 import { ApiKeysPage } from './pages/ApiKeysPage'
+import AuditoriaPage from './pages/AuditoriaPage'
 
 import './styles/index.css'
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/vendas"    element={<VendasPage />} />
           <Route path="/produtos"  element={<ProdutosPage />} />
           <Route path="/estoque"   element={<EstoquePage />} />
+          <Route path="/auditoria" element={<AuditoriaPage />} />
         </Route>
 
         {/* Protected — Gerente and Admin */}

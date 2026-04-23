@@ -7,6 +7,8 @@
 ## 📋 Atividade Prática
 Este projeto foi desenvolvido como parte de uma atividade prática integradora. O objetivo foi aplicar conceitos de desenvolvimento full-stack e engenharia de software no cenário **LANCHE**.
 
+👨‍🏫 **Professor Orientador:** [@agdelira](https://github.com/agdelira)
+
 - [📄 Detalhes da Atividade](docs/atividade/Atividade-a-Realizar/ATIVIDADE_PRATICA.md)
 - [📖 Cenário de Referência](docs/atividade/Atividade-a-Realizar/Cenario.md)
 

@@ -1,14 +1,13 @@
-# 📑 Índice de Documentação - LANCHE MVP
+# 📑 Índice de Documentação - LANCHE
 
-Guia centralizado para navegação e referência rápida de toda a documentação do projeto.
+Guia centralizado para navegação e referência rápida da documentação do projeto final.
 
 ---
 
 ## 🎯 Comece Por Aqui
 
 1. **Quer entender a arquitetura?** → [docs/arquitetura/ARQUITETURA.md](docs/arquitetura/ARQUITETURA.md)
-2. **Qual é o plano?** → [ROADMAP.md](ROADMAP.md)
-3. **Visão Geral** → [README.md](README.md)
+2. **Visão Geral** → [README.md](README.md)
 
 ---
 
@@ -18,6 +17,7 @@ Guia centralizado para navegação e referência rápida de toda a documentaçã
 | Documento | Descrição |
 |-----------|-----------|
 | [ARQUITETURA.md](docs/arquitetura/ARQUITETURA.md) | Arquitetura three-tier, fluxos, modelagem |
+| [ESPECIFICACOES_TECNICAS.md](docs/ESPECIFICACOES_TECNICAS.md) | Detalhamento da Stack e Criptografia (Resumo) |
 | [MODO_OFFLINE.md](docs/arquitetura/MODO_OFFLINE.md) | Modo Offline: IndexedDB, Sincronização, Validações |
 | [ENCRYPTION_SETUP.md](docs/arquitetura/ENCRYPTION_SETUP.md) | Guia de configuração de criptografia de banco |
 | [Diagrama de Classes](docs/arquitetura/diagramas/01_DIAGRAMA_CLASSES_MVP.puml) | Modelagem de classes UML |
@@ -27,59 +27,30 @@ Guia centralizado para navegação e referência rápida de toda a documentaçã
 | Documento | Descrição |
 |-----------|-----------|
 | [REQUISITOS_MVP.md](docs/requisitos/REQUISITOS_MVP.md) | Especificação técnica, RF, RNF e RN (Unificado) |
-| [Cenário de Negócio](docs/atividades/Atividade-a-Realizar/Cenario.md) | Contexto e regras de negócio |
-
-### 🚀 Planejamento & Roadmaps
-| Documento | Descrição |
-|-----------|-----------|
-| [ROADMAP.md](ROADMAP.md) | Timeline principal do projeto |
-| [ROADMAP_SPRINT_FINAL.md](docs/planejamento/ROADMAP_SPRINT_FINAL.md) | Planejamento da fase final de entrega |
-| [Plano Frontend](docs/planejamento/Frontend_Plano_Implementacao.md) | Plano de implementação da UI React |
-
-### ✅ Tarefas & Conclusões
-| Documento | Descrição |
-|-----------|-----------|
-| [TASK_1A_APIS](docs/tasks/TASK_1A_APIS_COMPLETA.md) | API Keys e Rate Limiting |
-| [TASK_1B_REPOSICAO](docs/tasks/TASK_1B_REPOSICAO_COMPLETA.md) | Reposição Automática de Estoque |
-| [TASK_1C_ALERTAS](docs/tasks/TASK_1C_ALERTAS_COMPLETA.md) | Monitoramento de Validade e Alertas |
-| [TASK_2A_CRIPTOGRAFIA](docs/tasks/TASK_2A_CRIPTOGRAFIA_COMPLETA.md) | Criptografia de Dados PII |
-| [TASK_2B_LGPD](docs/tasks/TASK_2B_LGPD_COMPLETA.md) | Conformidade LGPD Lite |
-| [TASK_3A_VALIDACOES_UX](docs/tasks/TASK_3A_VALIDACOES_UX.md) | Validações de Estoque e Melhorias de UX |
-| [CHANGELOG_21ABRIL](docs/tasks/CHANGELOG_21ABRIL.md) | Changelog de 21/04/2026 - Novas Funcionalidades |
-| [FASE1_CONCLUSAO.md](docs/conclusao/FASE1_CONCLUSAO.md) | Registro de conclusão da Fase 1 + Melhorias UX |
-| [CERTIFICATE.md](docs/conclusao/COMPLETION_CERTIFICATE.md) | Certificado de conclusão do MVP |
 
 ### 🧪 Testes & Qualidade
 | Documento | Descrição |
 |-----------|-----------|
-| [TESTES_VALIDACAO.md](docs/testes/TESTES_VALIDACAO_FINAL.md) | Plano de testes e resultados finais |
-| [TEST_RESULTS_SUMMARY.md](docs/testes/TEST_RESULTS_SUMMARY.md) | Sumário executivo de testes |
-| [FINAL_TEST_OUTPUT.txt](docs/testes/FINAL_TEST_OUTPUT.txt) | Log detalhado da execução de testes |
+| [TESTES_VALIDACAO_FINAL.md](docs/testes/TESTES_VALIDACAO_FINAL.md) | Plano de testes e documentação de validação |
 
 ---
 
 ## 📊 Estrutura de Pastas (Organizada)
 
-```
+```text
 lanche/
 ├── README.md                      # Ponto de entrada
-├── ROADMAP.md                     # Timeline principal
 ├── INDICE.md                      # Este guia
 │
 ├── docs/                          # Central de Documentação
 │   ├── arquitetura/               # Tech Stack e Design
-│   │   └── diagramas/             # Arquivos PlantUML
+│   │   └── diagramas/             # Arquivos PlantUML e PNGs
 │   ├── requisitos/                # RN, RF e RNF
-│   ├── planejamento/              # Roadmaps e planos de ação
-│   ├── tasks/                     # Histórico de entregas (TASK_*)
-│   ├── testes/                    # Logs e métricas de QA
-│   ├── conclusao/                 # Certificados e marcos
-│   └── atividades/                # Atividades acadêmicas/integradora
+│   └── testes/                    # Logs e métricas de QA
 │
 ├── backend/                       # API FastAPI
-└── frontend/                      # React Native / Vite
+└── frontend/                      # App Frontend
 ```
 
 ---
-**Última atualização:** 21 de Abril de 2026  
-**Status:** ✅ Documentação Reorganizada
+**Status:** ✅ Documentação Reorganizada e Limpa para Entrega Final
